@@ -73,7 +73,7 @@ export const Route = createFileRoute("/api/chat")({
           result = streamText({
             model: gateway(CHAT_MODEL),
             system,
-            messages: convertToModelMessages(messages),
+            messages: await convertToModelMessages(messages),
             temperature: 0.85,
           });
         } catch (error) {
