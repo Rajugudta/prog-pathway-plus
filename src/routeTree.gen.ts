@@ -10,42 +10,181 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
+import { Route as AuthRouteImport } from './routes/auth'
+import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
+import { Route as AuthenticatedLearnRouteImport } from './routes/_authenticated/learn'
+import { Route as AuthenticatedPlacementRouteImport } from './routes/_authenticated/placement'
+import { Route as AuthenticatedProblemsRouteImport } from './routes/_authenticated/problems'
+import { Route as AuthenticatedRoadmapsRouteImport } from './routes/_authenticated/roadmaps'
 import { Route as ApiChatRouteImport } from './routes/api/chat'
+import { Route as AuthenticatedInterviewsIndexRouteImport } from './routes/_authenticated/interviews.index'
+import { Route as AuthenticatedInterviewsInterviewIdRouteImport } from './routes/_authenticated/interviews.$interviewId'
+import { Route as AuthenticatedTutorIndexRouteImport } from './routes/_authenticated/tutor.index'
+import { Route as AuthenticatedTutorThreadIdRouteImport } from './routes/_authenticated/tutor.$threadId'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
+  id: '/_authenticated',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedLearnRoute = AuthenticatedLearnRouteImport.update({
+  id: '/learn',
+  path: '/learn',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedPlacementRoute = AuthenticatedPlacementRouteImport.update({
+  id: '/placement',
+  path: '/placement',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedProblemsRoute = AuthenticatedProblemsRouteImport.update({
+  id: '/problems',
+  path: '/problems',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedRoadmapsRoute = AuthenticatedRoadmapsRouteImport.update({
+  id: '/roadmaps',
+  path: '/roadmaps',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const ApiChatRoute = ApiChatRouteImport.update({
   id: '/api/chat',
   path: '/api/chat',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedInterviewsIndexRoute =
+  AuthenticatedInterviewsIndexRouteImport.update({
+    id: '/interviews/',
+    path: '/interviews/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedInterviewsInterviewIdRoute =
+  AuthenticatedInterviewsInterviewIdRouteImport.update({
+    id: '/interviews/$interviewId',
+    path: '/interviews/$interviewId',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedTutorIndexRoute = AuthenticatedTutorIndexRouteImport.update({
+  id: '/tutor/',
+  path: '/tutor/',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedTutorThreadIdRoute =
+  AuthenticatedTutorThreadIdRouteImport.update({
+    id: '/tutor/$threadId',
+    path: '/tutor/$threadId',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
+  '/dashboard': typeof AuthenticatedDashboardRoute
+  '/learn': typeof AuthenticatedLearnRoute
+  '/placement': typeof AuthenticatedPlacementRoute
+  '/problems': typeof AuthenticatedProblemsRoute
+  '/roadmaps': typeof AuthenticatedRoadmapsRoute
   '/api/chat': typeof ApiChatRoute
+  '/interviews/$interviewId': typeof AuthenticatedInterviewsInterviewIdRoute
+  '/tutor/$threadId': typeof AuthenticatedTutorThreadIdRoute
+  '/interviews/': typeof AuthenticatedInterviewsIndexRoute
+  '/tutor/': typeof AuthenticatedTutorIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
+  '/dashboard': typeof AuthenticatedDashboardRoute
+  '/learn': typeof AuthenticatedLearnRoute
+  '/placement': typeof AuthenticatedPlacementRoute
+  '/problems': typeof AuthenticatedProblemsRoute
+  '/roadmaps': typeof AuthenticatedRoadmapsRoute
   '/api/chat': typeof ApiChatRoute
+  '/interviews/$interviewId': typeof AuthenticatedInterviewsInterviewIdRoute
+  '/tutor/$threadId': typeof AuthenticatedTutorThreadIdRoute
+  '/interviews': typeof AuthenticatedInterviewsIndexRoute
+  '/tutor': typeof AuthenticatedTutorIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
+  '/auth': typeof AuthRoute
+  '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
+  '/_authenticated/learn': typeof AuthenticatedLearnRoute
+  '/_authenticated/placement': typeof AuthenticatedPlacementRoute
+  '/_authenticated/problems': typeof AuthenticatedProblemsRoute
+  '/_authenticated/roadmaps': typeof AuthenticatedRoadmapsRoute
   '/api/chat': typeof ApiChatRoute
+  '/_authenticated/interviews/$interviewId': typeof AuthenticatedInterviewsInterviewIdRoute
+  '/_authenticated/tutor/$threadId': typeof AuthenticatedTutorThreadIdRoute
+  '/_authenticated/interviews/': typeof AuthenticatedInterviewsIndexRoute
+  '/_authenticated/tutor/': typeof AuthenticatedTutorIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/api/chat'
+  fullPaths:
+    | '/'
+    | '/auth'
+    | '/dashboard'
+    | '/learn'
+    | '/placement'
+    | '/problems'
+    | '/roadmaps'
+    | '/api/chat'
+    | '/interviews/$interviewId'
+    | '/tutor/$threadId'
+    | '/interviews/'
+    | '/tutor/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/api/chat'
-  id: '__root__' | '/' | '/api/chat'
+  to:
+    | '/'
+    | '/auth'
+    | '/dashboard'
+    | '/learn'
+    | '/placement'
+    | '/problems'
+    | '/roadmaps'
+    | '/api/chat'
+    | '/interviews/$interviewId'
+    | '/tutor/$threadId'
+    | '/interviews'
+    | '/tutor'
+  id:
+    | '__root__'
+    | '/'
+    | '/_authenticated'
+    | '/auth'
+    | '/_authenticated/dashboard'
+    | '/_authenticated/learn'
+    | '/_authenticated/placement'
+    | '/_authenticated/problems'
+    | '/_authenticated/roadmaps'
+    | '/api/chat'
+    | '/_authenticated/interviews/$interviewId'
+    | '/_authenticated/tutor/$threadId'
+    | '/_authenticated/interviews/'
+    | '/_authenticated/tutor/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
+  AuthRoute: typeof AuthRoute
   ApiChatRoute: typeof ApiChatRoute
 }
 
@@ -58,6 +197,55 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/dashboard': {
+      id: '/_authenticated/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof AuthenticatedDashboardRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/learn': {
+      id: '/_authenticated/learn'
+      path: '/learn'
+      fullPath: '/learn'
+      preLoaderRoute: typeof AuthenticatedLearnRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/placement': {
+      id: '/_authenticated/placement'
+      path: '/placement'
+      fullPath: '/placement'
+      preLoaderRoute: typeof AuthenticatedPlacementRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/problems': {
+      id: '/_authenticated/problems'
+      path: '/problems'
+      fullPath: '/problems'
+      preLoaderRoute: typeof AuthenticatedProblemsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/roadmaps': {
+      id: '/_authenticated/roadmaps'
+      path: '/roadmaps'
+      fullPath: '/roadmaps'
+      preLoaderRoute: typeof AuthenticatedRoadmapsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/api/chat': {
       id: '/api/chat'
       path: '/api/chat'
@@ -65,11 +253,69 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiChatRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/interviews/': {
+      id: '/_authenticated/interviews/'
+      path: '/interviews'
+      fullPath: '/interviews/'
+      preLoaderRoute: typeof AuthenticatedInterviewsIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/interviews/$interviewId': {
+      id: '/_authenticated/interviews/$interviewId'
+      path: '/interviews/$interviewId'
+      fullPath: '/interviews/$interviewId'
+      preLoaderRoute: typeof AuthenticatedInterviewsInterviewIdRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/tutor/': {
+      id: '/_authenticated/tutor/'
+      path: '/tutor'
+      fullPath: '/tutor/'
+      preLoaderRoute: typeof AuthenticatedTutorIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/tutor/$threadId': {
+      id: '/_authenticated/tutor/$threadId'
+      path: '/tutor/$threadId'
+      fullPath: '/tutor/$threadId'
+      preLoaderRoute: typeof AuthenticatedTutorThreadIdRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
   }
 }
 
+interface AuthenticatedRouteRouteChildren {
+  AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
+  AuthenticatedLearnRoute: typeof AuthenticatedLearnRoute
+  AuthenticatedPlacementRoute: typeof AuthenticatedPlacementRoute
+  AuthenticatedProblemsRoute: typeof AuthenticatedProblemsRoute
+  AuthenticatedRoadmapsRoute: typeof AuthenticatedRoadmapsRoute
+  AuthenticatedInterviewsInterviewIdRoute: typeof AuthenticatedInterviewsInterviewIdRoute
+  AuthenticatedTutorThreadIdRoute: typeof AuthenticatedTutorThreadIdRoute
+  AuthenticatedInterviewsIndexRoute: typeof AuthenticatedInterviewsIndexRoute
+  AuthenticatedTutorIndexRoute: typeof AuthenticatedTutorIndexRoute
+}
+
+const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
+  AuthenticatedLearnRoute: AuthenticatedLearnRoute,
+  AuthenticatedPlacementRoute: AuthenticatedPlacementRoute,
+  AuthenticatedProblemsRoute: AuthenticatedProblemsRoute,
+  AuthenticatedRoadmapsRoute: AuthenticatedRoadmapsRoute,
+  AuthenticatedInterviewsInterviewIdRoute:
+    AuthenticatedInterviewsInterviewIdRoute,
+  AuthenticatedTutorThreadIdRoute: AuthenticatedTutorThreadIdRoute,
+  AuthenticatedInterviewsIndexRoute: AuthenticatedInterviewsIndexRoute,
+  AuthenticatedTutorIndexRoute: AuthenticatedTutorIndexRoute,
+}
+
+const AuthenticatedRouteRouteWithChildren =
+  AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
+  AuthRoute: AuthRoute,
   ApiChatRoute: ApiChatRoute,
 }
 export const routeTree = rootRouteImport

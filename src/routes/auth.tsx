@@ -1,0 +1,157 @@
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+
+export const Route = createFileRoute("/auth")({
+  head: () => ({
+    meta: [
+      { title: "Sign in — CodeDev" },
+      { name: "description", content: "Sign in to CodeDev to track lectures, problems, AI tutor threads and mock interviews." },
+      { property: "og:title", content: "Sign in — CodeDev" },
+      { property: "og:description", content: "Access your CodeDev learning studio." },
+    ],
+  }),
+  component: AuthPage,
+});
+
+function AuthPage() {
+  const navigate = useNavigate();
+  const [mode, setMode] = useState<"signin" | "signup">("signin");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [displayName, setDisplayName] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [checkEmail, setCheckEmail] = useState(false);
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data }) => {
+      if (data.session) navigate({ to: "/dashboard" });
+    });
+    const { data } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === "SIGNED_IN" && session) navigate({ to: "/dashboard" });
+    });
+    return () => data.subscription.unsubscribe();
+  }, [navigate]);
+
+  const submit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setBusy(true);
+    try {
+      if (mode === "signup") {
+        const { data, error } = await supabase.auth.signUp({
+          email,
+          password,
+          options: {
+            emailRedirectTo: window.location.origin,
+            data: { display_name: displayName || email.split("@")[0] },
+          },
+        });
+        if (error) throw error;
+        if (!data.session) {
+          setCheckEmail(true);
+          toast.success("Check your inbox to confirm your email.");
+        }
+      } else {
+        const { error } = await supabase.auth.signInWithPassword({ email, password });
+        if (error) throw error;
+      }
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Something went wrong");
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  return (
+    <div className="relative flex min-h-screen items-center justify-center overflow-hidden px-4 py-12">
+      <div className="pointer-events-none absolute inset-x-0 -top-40 h-[420px] bg-gradient-primary opacity-20 blur-[120px]" />
+      <div className="relative w-full max-w-md">
+        <Link to="/" className="mb-6 flex items-center gap-3">
+          <div className="grid size-9 place-items-center rounded-xl bg-gradient-primary text-sm font-bold text-primary-foreground">
+            {"</>"}
+          </div>
+          <span className="text-sm font-semibold tracking-tight">CodeDev</span>
+        </Link>
+
+        <div className="mica rounded-2xl p-7">
+          <h1 className="text-xl font-semibold tracking-tight">
+            {mode === "signin" ? "Welcome back" : "Create your studio"}
+          </h1>
+          <p className="mt-1 text-sm text-muted-foreground">
+            {mode === "signin"
+              ? "Pick up right where you left off."
+              : "Progress, tutor threads and interview scores get saved to your account."}
+          </p>
+
+          {checkEmail ? (
+            <div className="mt-6 rounded-xl border border-border bg-secondary p-4 text-sm text-muted-foreground">
+              We sent a confirmation link to <span className="text-foreground">{email}</span>. Click it,
+              then come back and sign in.
+            </div>
+          ) : (
+            <form onSubmit={submit} className="mt-6 space-y-4">
+              {mode === "signup" && (
+                <div className="space-y-2">
+                  <Label htmlFor="name">Display name</Label>
+                  <Input
+                    id="name"
+                    value={displayName}
+                    onChange={(e) => setDisplayName(e.target.value)}
+                    placeholder="Ada Lovelace"
+                    autoComplete="name"
+                  />
+                </div>
+              )}
+              <div className="space-y-2">
+                <Label htmlFor="email">Email</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="you@college.edu"
+                  autoComplete="email"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="password">Password</Label>
+                <Input
+                  id="password"
+                  type="password"
+                  required
+                  minLength={6}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="••••••••"
+                  autoComplete={mode === "signin" ? "current-password" : "new-password"}
+                />
+              </div>
+              <Button type="submit" variant="hero" size="lg" className="w-full" disabled={busy}>
+                {busy ? "Working…" : mode === "signin" ? "Sign in" : "Create account"}
+              </Button>
+            </form>
+          )}
+
+          <p className="mt-6 text-center text-xs text-muted-foreground">
+            {mode === "signin" ? "New here?" : "Already have an account?"}{" "}
+            <button
+              type="button"
+              className="text-primary hover:underline"
+              onClick={() => {
+                setMode(mode === "signin" ? "signup" : "signin");
+                setCheckEmail(false);
+              }}
+            >
+              {mode === "signin" ? "Create an account" : "Sign in"}
+            </button>
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
