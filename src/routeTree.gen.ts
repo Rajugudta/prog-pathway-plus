@@ -15,6 +15,7 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedLearnRouteImport } from './routes/_authenticated/learn'
 import { Route as AuthenticatedProblemsRouteImport } from './routes/_authenticated/problems'
+import { Route as AuthenticatedRoadmapsRouteImport } from './routes/_authenticated/roadmaps'
 import { Route as ApiChatRouteImport } from './routes/api/chat'
 import { Route as AuthenticatedInterviewsIndexRouteImport } from './routes/_authenticated/interviews.index'
 import { Route as AuthenticatedInterviewsInterviewIdRouteImport } from './routes/_authenticated/interviews.$interviewId'
@@ -48,6 +49,11 @@ const AuthenticatedLearnRoute = AuthenticatedLearnRouteImport.update({
 const AuthenticatedProblemsRoute = AuthenticatedProblemsRouteImport.update({
   id: '/problems',
   path: '/problems',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedRoadmapsRoute = AuthenticatedRoadmapsRouteImport.update({
+  id: '/roadmaps',
+  path: '/roadmaps',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const ApiChatRoute = ApiChatRouteImport.update({
@@ -85,6 +91,7 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/learn': typeof AuthenticatedLearnRoute
   '/problems': typeof AuthenticatedProblemsRoute
+  '/roadmaps': typeof AuthenticatedRoadmapsRoute
   '/api/chat': typeof ApiChatRoute
   '/interviews/$interviewId': typeof AuthenticatedInterviewsInterviewIdRoute
   '/tutor/$threadId': typeof AuthenticatedTutorThreadIdRoute
@@ -97,6 +104,7 @@ export interface FileRoutesByTo {
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/learn': typeof AuthenticatedLearnRoute
   '/problems': typeof AuthenticatedProblemsRoute
+  '/roadmaps': typeof AuthenticatedRoadmapsRoute
   '/api/chat': typeof ApiChatRoute
   '/interviews/$interviewId': typeof AuthenticatedInterviewsInterviewIdRoute
   '/tutor/$threadId': typeof AuthenticatedTutorThreadIdRoute
@@ -111,6 +119,7 @@ export interface FileRoutesById {
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/learn': typeof AuthenticatedLearnRoute
   '/_authenticated/problems': typeof AuthenticatedProblemsRoute
+  '/_authenticated/roadmaps': typeof AuthenticatedRoadmapsRoute
   '/api/chat': typeof ApiChatRoute
   '/_authenticated/interviews/$interviewId': typeof AuthenticatedInterviewsInterviewIdRoute
   '/_authenticated/tutor/$threadId': typeof AuthenticatedTutorThreadIdRoute
@@ -125,6 +134,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/learn'
     | '/problems'
+    | '/roadmaps'
     | '/api/chat'
     | '/interviews/$interviewId'
     | '/tutor/$threadId'
@@ -137,6 +147,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/learn'
     | '/problems'
+    | '/roadmaps'
     | '/api/chat'
     | '/interviews/$interviewId'
     | '/tutor/$threadId'
@@ -150,6 +161,7 @@ export interface FileRouteTypes {
     | '/_authenticated/dashboard'
     | '/_authenticated/learn'
     | '/_authenticated/problems'
+    | '/_authenticated/roadmaps'
     | '/api/chat'
     | '/_authenticated/interviews/$interviewId'
     | '/_authenticated/tutor/$threadId'
@@ -208,6 +220,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedProblemsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/roadmaps': {
+      id: '/_authenticated/roadmaps'
+      path: '/roadmaps'
+      fullPath: '/roadmaps'
+      preLoaderRoute: typeof AuthenticatedRoadmapsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/api/chat': {
       id: '/api/chat'
       path: '/api/chat'
@@ -250,6 +269,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedLearnRoute: typeof AuthenticatedLearnRoute
   AuthenticatedProblemsRoute: typeof AuthenticatedProblemsRoute
+  AuthenticatedRoadmapsRoute: typeof AuthenticatedRoadmapsRoute
   AuthenticatedInterviewsInterviewIdRoute: typeof AuthenticatedInterviewsInterviewIdRoute
   AuthenticatedTutorThreadIdRoute: typeof AuthenticatedTutorThreadIdRoute
   AuthenticatedInterviewsIndexRoute: typeof AuthenticatedInterviewsIndexRoute
@@ -260,6 +280,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedLearnRoute: AuthenticatedLearnRoute,
   AuthenticatedProblemsRoute: AuthenticatedProblemsRoute,
+  AuthenticatedRoadmapsRoute: AuthenticatedRoadmapsRoute,
   AuthenticatedInterviewsInterviewIdRoute:
     AuthenticatedInterviewsInterviewIdRoute,
   AuthenticatedTutorThreadIdRoute: AuthenticatedTutorThreadIdRoute,
