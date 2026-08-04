@@ -14,6 +14,7 @@ import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedLearnRouteImport } from './routes/_authenticated/learn'
+import { Route as AuthenticatedPlacementRouteImport } from './routes/_authenticated/placement'
 import { Route as AuthenticatedProblemsRouteImport } from './routes/_authenticated/problems'
 import { Route as AuthenticatedRoadmapsRouteImport } from './routes/_authenticated/roadmaps'
 import { Route as ApiChatRouteImport } from './routes/api/chat'
@@ -44,6 +45,11 @@ const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
 const AuthenticatedLearnRoute = AuthenticatedLearnRouteImport.update({
   id: '/learn',
   path: '/learn',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedPlacementRoute = AuthenticatedPlacementRouteImport.update({
+  id: '/placement',
+  path: '/placement',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedProblemsRoute = AuthenticatedProblemsRouteImport.update({
@@ -90,6 +96,7 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/learn': typeof AuthenticatedLearnRoute
+  '/placement': typeof AuthenticatedPlacementRoute
   '/problems': typeof AuthenticatedProblemsRoute
   '/roadmaps': typeof AuthenticatedRoadmapsRoute
   '/api/chat': typeof ApiChatRoute
@@ -103,6 +110,7 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/learn': typeof AuthenticatedLearnRoute
+  '/placement': typeof AuthenticatedPlacementRoute
   '/problems': typeof AuthenticatedProblemsRoute
   '/roadmaps': typeof AuthenticatedRoadmapsRoute
   '/api/chat': typeof ApiChatRoute
@@ -118,6 +126,7 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/learn': typeof AuthenticatedLearnRoute
+  '/_authenticated/placement': typeof AuthenticatedPlacementRoute
   '/_authenticated/problems': typeof AuthenticatedProblemsRoute
   '/_authenticated/roadmaps': typeof AuthenticatedRoadmapsRoute
   '/api/chat': typeof ApiChatRoute
@@ -133,6 +142,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/dashboard'
     | '/learn'
+    | '/placement'
     | '/problems'
     | '/roadmaps'
     | '/api/chat'
@@ -146,6 +156,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/dashboard'
     | '/learn'
+    | '/placement'
     | '/problems'
     | '/roadmaps'
     | '/api/chat'
@@ -160,6 +171,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/_authenticated/dashboard'
     | '/_authenticated/learn'
+    | '/_authenticated/placement'
     | '/_authenticated/problems'
     | '/_authenticated/roadmaps'
     | '/api/chat'
@@ -211,6 +223,13 @@ declare module '@tanstack/react-router' {
       path: '/learn'
       fullPath: '/learn'
       preLoaderRoute: typeof AuthenticatedLearnRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/placement': {
+      id: '/_authenticated/placement'
+      path: '/placement'
+      fullPath: '/placement'
+      preLoaderRoute: typeof AuthenticatedPlacementRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/problems': {
@@ -268,6 +287,7 @@ declare module '@tanstack/react-router' {
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedLearnRoute: typeof AuthenticatedLearnRoute
+  AuthenticatedPlacementRoute: typeof AuthenticatedPlacementRoute
   AuthenticatedProblemsRoute: typeof AuthenticatedProblemsRoute
   AuthenticatedRoadmapsRoute: typeof AuthenticatedRoadmapsRoute
   AuthenticatedInterviewsInterviewIdRoute: typeof AuthenticatedInterviewsInterviewIdRoute
@@ -279,6 +299,7 @@ interface AuthenticatedRouteRouteChildren {
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedLearnRoute: AuthenticatedLearnRoute,
+  AuthenticatedPlacementRoute: AuthenticatedPlacementRoute,
   AuthenticatedProblemsRoute: AuthenticatedProblemsRoute,
   AuthenticatedRoadmapsRoute: AuthenticatedRoadmapsRoute,
   AuthenticatedInterviewsInterviewIdRoute:
