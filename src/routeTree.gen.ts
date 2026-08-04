@@ -17,6 +17,7 @@ import { Route as AuthenticatedLearnRouteImport } from './routes/_authenticated/
 import { Route as AuthenticatedProblemsRouteImport } from './routes/_authenticated/problems'
 import { Route as ApiChatRouteImport } from './routes/api/chat'
 import { Route as AuthenticatedInterviewsIndexRouteImport } from './routes/_authenticated/interviews.index'
+import { Route as AuthenticatedInterviewsInterviewIdRouteImport } from './routes/_authenticated/interviews.$interviewId'
 import { Route as AuthenticatedTutorIndexRouteImport } from './routes/_authenticated/tutor.index'
 import { Route as AuthenticatedTutorThreadIdRouteImport } from './routes/_authenticated/tutor.$threadId'
 
@@ -60,6 +61,12 @@ const AuthenticatedInterviewsIndexRoute =
     path: '/interviews/',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedInterviewsInterviewIdRoute =
+  AuthenticatedInterviewsInterviewIdRouteImport.update({
+    id: '/interviews/$interviewId',
+    path: '/interviews/$interviewId',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedTutorIndexRoute = AuthenticatedTutorIndexRouteImport.update({
   id: '/tutor/',
   path: '/tutor/',
@@ -79,6 +86,7 @@ export interface FileRoutesByFullPath {
   '/learn': typeof AuthenticatedLearnRoute
   '/problems': typeof AuthenticatedProblemsRoute
   '/api/chat': typeof ApiChatRoute
+  '/interviews/$interviewId': typeof AuthenticatedInterviewsInterviewIdRoute
   '/tutor/$threadId': typeof AuthenticatedTutorThreadIdRoute
   '/interviews/': typeof AuthenticatedInterviewsIndexRoute
   '/tutor/': typeof AuthenticatedTutorIndexRoute
@@ -90,6 +98,7 @@ export interface FileRoutesByTo {
   '/learn': typeof AuthenticatedLearnRoute
   '/problems': typeof AuthenticatedProblemsRoute
   '/api/chat': typeof ApiChatRoute
+  '/interviews/$interviewId': typeof AuthenticatedInterviewsInterviewIdRoute
   '/tutor/$threadId': typeof AuthenticatedTutorThreadIdRoute
   '/interviews': typeof AuthenticatedInterviewsIndexRoute
   '/tutor': typeof AuthenticatedTutorIndexRoute
@@ -103,6 +112,7 @@ export interface FileRoutesById {
   '/_authenticated/learn': typeof AuthenticatedLearnRoute
   '/_authenticated/problems': typeof AuthenticatedProblemsRoute
   '/api/chat': typeof ApiChatRoute
+  '/_authenticated/interviews/$interviewId': typeof AuthenticatedInterviewsInterviewIdRoute
   '/_authenticated/tutor/$threadId': typeof AuthenticatedTutorThreadIdRoute
   '/_authenticated/interviews/': typeof AuthenticatedInterviewsIndexRoute
   '/_authenticated/tutor/': typeof AuthenticatedTutorIndexRoute
@@ -116,6 +126,7 @@ export interface FileRouteTypes {
     | '/learn'
     | '/problems'
     | '/api/chat'
+    | '/interviews/$interviewId'
     | '/tutor/$threadId'
     | '/interviews/'
     | '/tutor/'
@@ -127,6 +138,7 @@ export interface FileRouteTypes {
     | '/learn'
     | '/problems'
     | '/api/chat'
+    | '/interviews/$interviewId'
     | '/tutor/$threadId'
     | '/interviews'
     | '/tutor'
@@ -139,6 +151,7 @@ export interface FileRouteTypes {
     | '/_authenticated/learn'
     | '/_authenticated/problems'
     | '/api/chat'
+    | '/_authenticated/interviews/$interviewId'
     | '/_authenticated/tutor/$threadId'
     | '/_authenticated/interviews/'
     | '/_authenticated/tutor/'
@@ -209,6 +222,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedInterviewsIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/interviews/$interviewId': {
+      id: '/_authenticated/interviews/$interviewId'
+      path: '/interviews/$interviewId'
+      fullPath: '/interviews/$interviewId'
+      preLoaderRoute: typeof AuthenticatedInterviewsInterviewIdRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/tutor/': {
       id: '/_authenticated/tutor/'
       path: '/tutor'
@@ -230,6 +250,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedLearnRoute: typeof AuthenticatedLearnRoute
   AuthenticatedProblemsRoute: typeof AuthenticatedProblemsRoute
+  AuthenticatedInterviewsInterviewIdRoute: typeof AuthenticatedInterviewsInterviewIdRoute
   AuthenticatedTutorThreadIdRoute: typeof AuthenticatedTutorThreadIdRoute
   AuthenticatedInterviewsIndexRoute: typeof AuthenticatedInterviewsIndexRoute
   AuthenticatedTutorIndexRoute: typeof AuthenticatedTutorIndexRoute
@@ -239,6 +260,8 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedLearnRoute: AuthenticatedLearnRoute,
   AuthenticatedProblemsRoute: AuthenticatedProblemsRoute,
+  AuthenticatedInterviewsInterviewIdRoute:
+    AuthenticatedInterviewsInterviewIdRoute,
   AuthenticatedTutorThreadIdRoute: AuthenticatedTutorThreadIdRoute,
   AuthenticatedInterviewsIndexRoute: AuthenticatedInterviewsIndexRoute,
   AuthenticatedTutorIndexRoute: AuthenticatedTutorIndexRoute,
