@@ -2,7 +2,6 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-import { lovable } from "@/integrations/lovable";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -64,14 +63,6 @@ function AuthPage() {
       toast.error(err instanceof Error ? err.message : "Something went wrong");
     } finally {
       setBusy(false);
-    }
-  };
-
-  const google = async () => {
-    try {
-      await lovable.auth.signInWithOAuth("google", { redirect_uri: window.location.origin });
-    } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Google sign-in failed");
     }
   };
 
@@ -145,14 +136,6 @@ function AuthPage() {
               </Button>
             </form>
           )}
-
-          <div className="my-5 flex items-center gap-3 text-[11px] uppercase tracking-wider text-muted-foreground">
-            <span className="h-px flex-1 bg-border" /> or <span className="h-px flex-1 bg-border" />
-          </div>
-
-          <Button variant="mica" size="lg" className="w-full" onClick={google}>
-            Continue with Google
-          </Button>
 
           <p className="mt-6 text-center text-xs text-muted-foreground">
             {mode === "signin" ? "New here?" : "Already have an account?"}{" "}
