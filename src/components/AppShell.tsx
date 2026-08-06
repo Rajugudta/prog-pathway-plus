@@ -25,6 +25,8 @@ const NAV = [
   { to: "/interviews", label: "Interview Studio", icon: Mic },
   { to: "/roadmaps", label: "Roadmaps", icon: MapIcon },
   { to: "/placement", label: "Placement Hub", icon: GraduationCap },
+  { to: "/achievements", label: "Achievements", icon: Trophy },
+
 ] as const;
 
 export function AppShell({
