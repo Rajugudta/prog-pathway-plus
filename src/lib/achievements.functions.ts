@@ -91,18 +91,27 @@ export const saveSolution = createServerFn({ method: "POST" })
     z.object({ problemId: z.string(), language: z.string(), code: z.string().max(20000) }).parse(input),
   )
   .handler(async ({ context, data }) => {
-    const { error } = await context.supabase
+    const { data: existing } = await context.supabase
       .from("problem_progress")
-      .upsert(
-        {
+      .select("id")
+      .eq("user_id", context.userId)
+      .eq("problem_id", data.problemId)
+      .maybeSingle();
+
+    // Never downgrade a "solved" row — only store the code the learner is working on.
+    const { error } = existing
+      ? await context.supabase
+          .from("problem_progress")
+          .update({ language: data.language, code: data.code })
+          .eq("id", existing.id as string)
+      : await context.supabase.from("problem_progress").insert({
           user_id: context.userId,
           problem_id: data.problemId,
           status: "attempted",
           language: data.language,
           code: data.code,
-        },
-        { onConflict: "user_id,problem_id" },
-      );
+        });
     if (error) throw new Error(error.message);
+
     return { ok: true };
   });
