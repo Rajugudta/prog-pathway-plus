@@ -10,7 +10,9 @@ import {
   Mic,
   PanelLeftClose,
   PanelLeftOpen,
+  Trophy,
   LogOut,
+
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
