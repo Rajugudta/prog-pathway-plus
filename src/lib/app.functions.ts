@@ -177,9 +177,12 @@ export const toggleLectureComplete = createServerFn({ method: "POST" })
 
     if (data.completed && !wasCompleted) {
       const { awardXp, XP_PER_LECTURE } = await import("./xp.server");
+      const { syncAchievements } = await import("./achievements.server");
       const reward = await awardXp(context.supabase, context.userId, XP_PER_LECTURE);
-      return { completed: true, reward };
+      const { unlocked } = await syncAchievements(context.supabase, context.userId);
+      return { completed: true, reward: reward ? { ...reward, unlocked } : null };
     }
+
     return { completed: data.completed, reward: null };
 
   });
