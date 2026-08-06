@@ -10,6 +10,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { LECTURES, LECTURE_TRACKS, type Lecture } from "@/data/lectures";
 import { getProgress, toggleLectureComplete } from "@/lib/app.functions";
+import { celebrateBadges } from "@/lib/celebrate";
+
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/_authenticated/learn")({
