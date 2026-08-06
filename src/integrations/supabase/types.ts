@@ -14,6 +14,30 @@ export type Database = {
   }
   public: {
     Tables: {
+      achievements: {
+        Row: {
+          badge_id: string
+          id: string
+          seen: boolean
+          unlocked_at: string
+          user_id: string
+        }
+        Insert: {
+          badge_id: string
+          id?: string
+          seen?: boolean
+          unlocked_at?: string
+          user_id: string
+        }
+        Update: {
+          badge_id?: string
+          id?: string
+          seen?: boolean
+          unlocked_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       interview_sessions: {
         Row: {
           created_at: string
@@ -204,6 +228,39 @@ export type Database = {
           id?: string
           roadmap_id?: string
           step_id?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      solution_reviews: {
+        Row: {
+          code: string
+          created_at: string
+          id: string
+          language: string
+          problem_id: string
+          review: Json
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          id?: string
+          language: string
+          problem_id: string
+          review: Json
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          id?: string
+          language?: string
+          problem_id?: string
+          review?: Json
+          updated_at?: string
           user_id?: string
         }
         Relationships: []

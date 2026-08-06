@@ -10,6 +10,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { LECTURES, LECTURE_TRACKS, type Lecture } from "@/data/lectures";
 import { getProgress, toggleLectureComplete } from "@/lib/app.functions";
+import { celebrateBadges } from "@/lib/celebrate";
+
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/_authenticated/learn")({
@@ -44,13 +46,16 @@ function LearnPage() {
     onSuccess: (res) => {
       qc.invalidateQueries({ queryKey: ["progress"] });
       qc.invalidateQueries({ queryKey: ["profile"] });
+      qc.invalidateQueries({ queryKey: ["achievements"] });
       if (res?.reward) {
         toast.success(`+${res.reward.awarded} XP`, {
           description: res.reward.leveledUp
             ? `Level ${res.reward.level} unlocked · ${res.reward.streak} day streak`
             : `${res.reward.xp} XP total · ${res.reward.streak} day streak`,
         });
+        celebrateBadges(res.reward.unlocked);
       }
+
     },
   });
 

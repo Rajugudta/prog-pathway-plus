@@ -6,6 +6,10 @@ import { Check, Search } from "lucide-react";
 import { toast } from "sonner";
 
 import { AppShell, PageSection } from "@/components/AppShell";
+import { CodeReviewPanel } from "@/components/CodeReviewPanel";
+import { celebrateBadges } from "@/lib/celebrate";
+
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { LANGUAGES, PROBLEMS, TOPICS, type Problem } from "@/data/problems";
@@ -45,13 +49,16 @@ function ProblemsPage() {
     onSuccess: (res) => {
       qc.invalidateQueries({ queryKey: ["progress"] });
       qc.invalidateQueries({ queryKey: ["profile"] });
+      qc.invalidateQueries({ queryKey: ["achievements"] });
       if (res?.reward) {
         toast.success(`+${res.reward.awarded} XP`, {
           description: res.reward.leveledUp
             ? `Level ${res.reward.level} unlocked · ${res.reward.streak} day streak`
             : `${res.reward.xp} XP total · ${res.reward.streak} day streak`,
         });
+        celebrateBadges(res.reward.unlocked);
       }
+
     },
   });
 
@@ -176,9 +183,8 @@ function ProblemsPage() {
                 ))}
               </div>
 
-              <pre className="mt-4 overflow-x-auto rounded-xl border border-border bg-background/70 p-4 font-mono text-xs leading-relaxed">
-                {open.starter[language] ?? open.starter[open.languages[0] ?? ""] ?? "// starter code"}
-              </pre>
+              <CodeReviewPanel key={open.slug} problem={open} language={language} />
+
 
               <div className="mt-5 flex justify-end">
                 <Button
