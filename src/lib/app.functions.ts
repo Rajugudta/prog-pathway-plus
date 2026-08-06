@@ -82,12 +82,16 @@ export const getProfile = createServerFn({ method: "GET" })
   .handler(async ({ context }) => {
     const { data, error } = await context.supabase
       .from("profiles")
-      .select("id, display_name, xp, level, streak")
+      .select("id, display_name, xp, level, streak, last_active_day")
       .eq("id", context.userId)
       .maybeSingle();
     if (error) throw new Error(error.message);
-    return data;
+    if (!data) return data;
+    const { touchStreak } = await import("./xp.server");
+    const streak = await touchStreak(context.supabase, context.userId, data as never);
+    return { ...data, streak };
   });
+
 
 export const getProgress = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
