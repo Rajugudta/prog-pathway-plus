@@ -176,9 +176,8 @@ function ProblemsPage() {
                 ))}
               </div>
 
-              <pre className="mt-4 overflow-x-auto rounded-xl border border-border bg-background/70 p-4 font-mono text-xs leading-relaxed">
-                {open.starter[language] ?? open.starter[open.languages[0] ?? ""] ?? "// starter code"}
-              </pre>
+              <CodeReviewPanel key={open.slug} problem={open} language={language} />
+
 
               <div className="mt-5 flex justify-end">
                 <Button
