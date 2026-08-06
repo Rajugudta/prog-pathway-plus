@@ -58,7 +58,7 @@ export const reviewSolution = createServerFn({ method: "POST" })
         problem_id: data.problemId,
         language: data.language,
         code: data.code,
-        review: review as unknown as Record<string, unknown>,
+        review: review as unknown as Json,
       },
       { onConflict: "user_id,problem_id" },
     );
