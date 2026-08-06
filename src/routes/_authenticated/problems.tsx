@@ -3,6 +3,8 @@ import { useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { Check, Search } from "lucide-react";
+import { toast } from "sonner";
+
 import { AppShell, PageSection } from "@/components/AppShell";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -40,8 +42,19 @@ function ProblemsPage() {
 
   const mark = useMutation({
     mutationFn: (vars: { problemId: string; solved: boolean }) => toggleFn({ data: vars }),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["progress"] }),
+    onSuccess: (res) => {
+      qc.invalidateQueries({ queryKey: ["progress"] });
+      qc.invalidateQueries({ queryKey: ["profile"] });
+      if (res?.reward) {
+        toast.success(`+${res.reward.awarded} XP`, {
+          description: res.reward.leveledUp
+            ? `Level ${res.reward.level} unlocked · ${res.reward.streak} day streak`
+            : `${res.reward.xp} XP total · ${res.reward.streak} day streak`,
+        });
+      }
+    },
   });
+
 
   const list = useMemo(() => {
     const q = query.trim().toLowerCase();

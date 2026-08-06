@@ -82,12 +82,16 @@ export const getProfile = createServerFn({ method: "GET" })
   .handler(async ({ context }) => {
     const { data, error } = await context.supabase
       .from("profiles")
-      .select("id, display_name, xp, level, streak")
+      .select("id, display_name, xp, level, streak, last_active_day")
       .eq("id", context.userId)
       .maybeSingle();
     if (error) throw new Error(error.message);
-    return data;
+    if (!data) return data;
+    const { touchStreak } = await import("./xp.server");
+    const streak = await touchStreak(context.supabase, context.userId, data as never);
+    return { ...data, streak };
   });
+
 
 export const getProgress = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
@@ -115,14 +119,18 @@ export const toggleProblemSolved = createServerFn({ method: "POST" })
         .eq("user_id", context.userId)
         .eq("problem_id", data.problemId);
       if (error) throw new Error(error.message);
-      return { solved: false };
+      return { solved: false, reward: null };
     }
     const { error } = await context.supabase
       .from("problem_progress")
       .insert({ user_id: context.userId, problem_id: data.problemId, status: "solved" });
-    if (error && !error.message.includes("duplicate")) throw new Error(error.message);
-    await context.supabase.rpc; // no-op guard for lint
-    return { solved: true };
+    const alreadySolved = !!error && /duplicate/i.test(error.message);
+    if (error && !alreadySolved) throw new Error(error.message);
+
+    if (alreadySolved) return { solved: true, reward: null };
+    const { awardXp, XP_PER_PROBLEM } = await import("./xp.server");
+    const reward = await awardXp(context.supabase, context.userId, XP_PER_PROBLEM);
+    return { solved: true, reward };
   });
 
 export const toggleLectureComplete = createServerFn({ method: "POST" })
@@ -133,10 +141,12 @@ export const toggleLectureComplete = createServerFn({ method: "POST" })
   .handler(async ({ context, data }) => {
     const { data: existing } = await context.supabase
       .from("lecture_progress")
-      .select("id")
+      .select("id, completed")
       .eq("user_id", context.userId)
       .eq("lecture_id", data.lectureId)
       .maybeSingle();
+
+    const wasCompleted = !!existing?.completed;
 
     if (existing) {
       const { error } = await context.supabase
@@ -150,5 +160,12 @@ export const toggleLectureComplete = createServerFn({ method: "POST" })
         .insert({ user_id: context.userId, lecture_id: data.lectureId, completed: data.completed });
       if (error) throw new Error(error.message);
     }
-    return { completed: data.completed };
+
+    if (data.completed && !wasCompleted) {
+      const { awardXp, XP_PER_LECTURE } = await import("./xp.server");
+      const reward = await awardXp(context.supabase, context.userId, XP_PER_LECTURE);
+      return { completed: true, reward };
+    }
+    return { completed: data.completed, reward: null };
+
   });
