@@ -47,13 +47,16 @@ function ProblemsPage() {
     onSuccess: (res) => {
       qc.invalidateQueries({ queryKey: ["progress"] });
       qc.invalidateQueries({ queryKey: ["profile"] });
+      qc.invalidateQueries({ queryKey: ["achievements"] });
       if (res?.reward) {
         toast.success(`+${res.reward.awarded} XP`, {
           description: res.reward.leveledUp
             ? `Level ${res.reward.level} unlocked · ${res.reward.streak} day streak`
             : `${res.reward.xp} XP total · ${res.reward.streak} day streak`,
         });
+        celebrateBadges(res.reward.unlocked);
       }
+
     },
   });
 
