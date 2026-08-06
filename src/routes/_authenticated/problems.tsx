@@ -6,6 +6,8 @@ import { Check, Search } from "lucide-react";
 import { toast } from "sonner";
 
 import { AppShell, PageSection } from "@/components/AppShell";
+import { CodeReviewPanel } from "@/components/CodeReviewPanel";
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { LANGUAGES, PROBLEMS, TOPICS, type Problem } from "@/data/problems";
