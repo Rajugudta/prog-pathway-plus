@@ -101,7 +101,9 @@ export const getProgress = createServerFn({ method: "GET" })
       context.supabase.from("lecture_progress").select("lecture_id, completed").eq("user_id", context.userId),
     ]);
     return {
-      solved: (problems.data ?? []).map((r) => r.problem_id as string),
+      solved: (problems.data ?? [])
+        .filter((r) => r.status === "solved")
+        .map((r) => r.problem_id as string),
       watched: (lectures.data ?? []).filter((r) => r.completed).map((r) => r.lecture_id as string),
     };
   });
@@ -112,26 +114,38 @@ export const toggleProblemSolved = createServerFn({ method: "POST" })
     z.object({ problemId: z.string(), solved: z.boolean() }).parse(input),
   )
   .handler(async ({ context, data }) => {
-    if (!data.solved) {
+    const { data: existing } = await context.supabase
+      .from("problem_progress")
+      .select("id, status")
+      .eq("user_id", context.userId)
+      .eq("problem_id", data.problemId)
+      .maybeSingle();
+
+    const wasSolved = existing?.status === "solved";
+    const status = data.solved ? "solved" : "attempted";
+
+    if (existing) {
       const { error } = await context.supabase
         .from("problem_progress")
-        .delete()
-        .eq("user_id", context.userId)
-        .eq("problem_id", data.problemId);
+        .update({ status })
+        .eq("id", existing.id as string);
       if (error) throw new Error(error.message);
-      return { solved: false, reward: null };
+    } else {
+      const { error } = await context.supabase
+        .from("problem_progress")
+        .insert({ user_id: context.userId, problem_id: data.problemId, status });
+      if (error) throw new Error(error.message);
     }
-    const { error } = await context.supabase
-      .from("problem_progress")
-      .insert({ user_id: context.userId, problem_id: data.problemId, status: "solved" });
-    const alreadySolved = !!error && /duplicate/i.test(error.message);
-    if (error && !alreadySolved) throw new Error(error.message);
 
-    if (alreadySolved) return { solved: true, reward: null };
+    if (!data.solved || wasSolved) return { solved: data.solved, reward: null };
+
     const { awardXp, XP_PER_PROBLEM } = await import("./xp.server");
+    const { syncAchievements } = await import("./achievements.server");
     const reward = await awardXp(context.supabase, context.userId, XP_PER_PROBLEM);
-    return { solved: true, reward };
+    const { unlocked } = await syncAchievements(context.supabase, context.userId);
+    return { solved: true, reward: reward ? { ...reward, unlocked } : null };
   });
+
 
 export const toggleLectureComplete = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
