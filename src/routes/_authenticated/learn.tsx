@@ -39,8 +39,19 @@ function LearnPage() {
 
   const mark = useMutation({
     mutationFn: (vars: { lectureId: string; completed: boolean }) => toggleFn({ data: vars }),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["progress"] }),
+    onSuccess: (res) => {
+      qc.invalidateQueries({ queryKey: ["progress"] });
+      qc.invalidateQueries({ queryKey: ["profile"] });
+      if (res?.reward) {
+        toast.success(`+${res.reward.awarded} XP`, {
+          description: res.reward.leveledUp
+            ? `Level ${res.reward.level} unlocked · ${res.reward.streak} day streak`
+            : `${res.reward.xp} XP total · ${res.reward.streak} day streak`,
+        });
+      }
+    },
   });
+
 
   const list = useMemo(() => {
     const q = query.trim().toLowerCase();
