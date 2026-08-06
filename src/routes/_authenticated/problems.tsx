@@ -7,6 +7,8 @@ import { toast } from "sonner";
 
 import { AppShell, PageSection } from "@/components/AppShell";
 import { CodeReviewPanel } from "@/components/CodeReviewPanel";
+import { celebrateBadges } from "@/lib/celebrate";
+
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
