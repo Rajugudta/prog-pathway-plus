@@ -14,6 +14,7 @@ import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedAchievementsRouteImport } from './routes/_authenticated/achievements'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
+import { Route as AuthenticatedDsaRouteImport } from './routes/_authenticated/dsa'
 import { Route as AuthenticatedLearnRouteImport } from './routes/_authenticated/learn'
 import { Route as AuthenticatedPlacementRouteImport } from './routes/_authenticated/placement'
 import { Route as AuthenticatedProblemsRouteImport } from './routes/_authenticated/problems'
@@ -47,6 +48,11 @@ const AuthenticatedAchievementsRoute =
 const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedDsaRoute = AuthenticatedDsaRouteImport.update({
+  id: '/dsa',
+  path: '/dsa',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedLearnRoute = AuthenticatedLearnRouteImport.update({
@@ -103,6 +109,7 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/achievements': typeof AuthenticatedAchievementsRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/dsa': typeof AuthenticatedDsaRoute
   '/learn': typeof AuthenticatedLearnRoute
   '/placement': typeof AuthenticatedPlacementRoute
   '/problems': typeof AuthenticatedProblemsRoute
@@ -118,6 +125,7 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/achievements': typeof AuthenticatedAchievementsRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/dsa': typeof AuthenticatedDsaRoute
   '/learn': typeof AuthenticatedLearnRoute
   '/placement': typeof AuthenticatedPlacementRoute
   '/problems': typeof AuthenticatedProblemsRoute
@@ -135,6 +143,7 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/_authenticated/achievements': typeof AuthenticatedAchievementsRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
+  '/_authenticated/dsa': typeof AuthenticatedDsaRoute
   '/_authenticated/learn': typeof AuthenticatedLearnRoute
   '/_authenticated/placement': typeof AuthenticatedPlacementRoute
   '/_authenticated/problems': typeof AuthenticatedProblemsRoute
@@ -152,6 +161,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/achievements'
     | '/dashboard'
+    | '/dsa'
     | '/learn'
     | '/placement'
     | '/problems'
@@ -167,6 +177,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/achievements'
     | '/dashboard'
+    | '/dsa'
     | '/learn'
     | '/placement'
     | '/problems'
@@ -183,6 +194,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/_authenticated/achievements'
     | '/_authenticated/dashboard'
+    | '/_authenticated/dsa'
     | '/_authenticated/learn'
     | '/_authenticated/placement'
     | '/_authenticated/problems'
@@ -236,6 +248,13 @@ declare module '@tanstack/react-router' {
       path: '/dashboard'
       fullPath: '/dashboard'
       preLoaderRoute: typeof AuthenticatedDashboardRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/dsa': {
+      id: '/_authenticated/dsa'
+      path: '/dsa'
+      fullPath: '/dsa'
+      preLoaderRoute: typeof AuthenticatedDsaRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/learn': {
@@ -307,6 +326,7 @@ declare module '@tanstack/react-router' {
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedAchievementsRoute: typeof AuthenticatedAchievementsRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
+  AuthenticatedDsaRoute: typeof AuthenticatedDsaRoute
   AuthenticatedLearnRoute: typeof AuthenticatedLearnRoute
   AuthenticatedPlacementRoute: typeof AuthenticatedPlacementRoute
   AuthenticatedProblemsRoute: typeof AuthenticatedProblemsRoute
@@ -320,6 +340,7 @@ interface AuthenticatedRouteRouteChildren {
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAchievementsRoute: AuthenticatedAchievementsRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
+  AuthenticatedDsaRoute: AuthenticatedDsaRoute,
   AuthenticatedLearnRoute: AuthenticatedLearnRoute,
   AuthenticatedPlacementRoute: AuthenticatedPlacementRoute,
   AuthenticatedProblemsRoute: AuthenticatedProblemsRoute,

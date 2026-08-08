@@ -1,6 +1,7 @@
 import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import { useState, type ReactNode } from "react";
 import {
+  Binary,
   BookOpen,
   Braces,
   GraduationCap,
@@ -22,6 +23,7 @@ import { useAuth } from "@/hooks/useAuth";
 const NAV = [
   { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { to: "/learn", label: "Lectures", icon: BookOpen },
+  { to: "/dsa", label: "DSA Academy", icon: Binary },
   { to: "/problems", label: "Problems", icon: Braces },
   { to: "/tutor", label: "AI Tutor", icon: MessagesSquare },
   { to: "/interviews", label: "Interview Studio", icon: Mic },
