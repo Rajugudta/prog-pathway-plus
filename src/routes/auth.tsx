@@ -202,7 +202,6 @@ function AuthPage() {
           referrals.
         </p>
       </div>
-      </div>
     </div>
   );
 }
