@@ -57,7 +57,14 @@ export const submitQuiz = createServerFn({ method: "POST" })
       if (error) throw new Error(error.message);
     }
 
-    let reward = null as null | Record<string, unknown>;
+    let reward: {
+      xp: number;
+      level: number;
+      streak: number;
+      leveledUp: boolean;
+      awarded: number;
+      unlocked: string[];
+    } | null = null;
     if (passed && !wasPassed) {
       const { awardXp } = await import("./xp.server");
       const { syncAchievements } = await import("./achievements.server");
