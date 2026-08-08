@@ -195,6 +195,13 @@ function AuthPage() {
             </button>
           </p>
         </div>
+
+        <p className="mt-4 text-center text-[11px] leading-relaxed text-muted-foreground">
+          CodeDev will never ask for payment, OTPs or your password over chat, email or social media.
+          Sign in only on this page, and never share your account with anyone offering placements or
+          referrals.
+        </p>
+      </div>
       </div>
     </div>
   );
