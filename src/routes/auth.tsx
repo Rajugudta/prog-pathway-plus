@@ -2,6 +2,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+import { lovable } from "@/integrations/lovable/index";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -36,6 +37,25 @@ function AuthPage() {
     });
     return () => data.subscription.unsubscribe();
   }, [navigate]);
+
+  const signInWithGoogle = async () => {
+    setBusy(true);
+    try {
+      const result = await lovable.auth.signInWithOAuth("google", {
+        redirect_uri: window.location.origin,
+      });
+      if (result.error) {
+        toast.error("Google sign-in failed. Please try again.");
+        return;
+      }
+      if (result.redirected) return;
+      navigate({ to: "/dashboard" });
+    } catch {
+      toast.error("Google sign-in failed. Please try again.");
+    } finally {
+      setBusy(false);
+    }
+  };
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -86,6 +106,30 @@ function AuthPage() {
               ? "Pick up right where you left off."
               : "Progress, tutor threads and interview scores get saved to your account."}
           </p>
+
+          <div className="mt-6 space-y-3">
+            <Button
+              type="button"
+              variant="mica"
+              size="lg"
+              className="w-full"
+              disabled={busy}
+              onClick={signInWithGoogle}
+            >
+              <svg viewBox="0 0 24 24" className="mr-2 size-4" aria-hidden="true">
+                <path fill="#EA4335" d="M12 10.2v3.9h5.5a4.7 4.7 0 0 1-2 3.1l3.2 2.5c1.9-1.7 3-4.3 3-7.3 0-.7-.1-1.4-.2-2H12z" />
+                <path fill="#34A853" d="M6.6 14.3 5.9 15l-2.6 2c1.6 3.2 4.9 5.4 8.7 5.4 2.6 0 4.9-.9 6.5-2.4l-3.2-2.5c-.9.6-2 1-3.3 1-2.6 0-4.7-1.7-5.4-4z" />
+                <path fill="#4A90E2" d="M3.3 6.9A9.9 9.9 0 0 0 2.2 12c0 1.8.4 3.6 1.1 5.1l3.3-2.6a6 6 0 0 1 0-3.8z" />
+                <path fill="#FBBC05" d="M12 5.6c1.5 0 2.8.5 3.8 1.5l2.8-2.8C16.9 2.7 14.6 1.8 12 1.8c-3.8 0-7.1 2.2-8.7 5.4l3.3 2.6c.7-2.3 2.8-4.2 5.4-4.2z" />
+              </svg>
+              Continue with Google
+            </Button>
+            <div className="flex items-center gap-3">
+              <span className="h-px flex-1 bg-border" />
+              <span className="text-[11px] uppercase tracking-wider text-muted-foreground">or</span>
+              <span className="h-px flex-1 bg-border" />
+            </div>
+          </div>
 
           {checkEmail ? (
             <div className="mt-6 rounded-xl border border-border bg-secondary p-4 text-sm text-muted-foreground">
