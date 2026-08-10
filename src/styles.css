@@ -2,7 +2,7 @@
 @source "../src";
 @import "tw-animate-css";
 
-@custom-variant dark (&:is(.dark *));
+@custom-variant dark (&:where(:root:not([data-theme="light"]) *));
 
 /*
  * CodeDev design system — Fluent / Windows 11 inspired.
@@ -63,9 +63,8 @@
   --color-sidebar-ring: var(--sidebar-ring);
 }
 
-:root {
+:root[data-theme="light"] {
   color-scheme: light;
-  --radius: 0.75rem;
 
   --background: oklch(0.985 0.003 250);
   --foreground: oklch(0.21 0.02 264);
@@ -140,8 +139,9 @@
   --transition-fluent: 220ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.dark {
+:root {
   color-scheme: dark;
+  --radius: 0.75rem;
 
   --background: oklch(0.16 0.018 264);
   --foreground: oklch(0.97 0.004 250);
