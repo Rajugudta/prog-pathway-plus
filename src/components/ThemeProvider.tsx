@@ -19,7 +19,7 @@ const ThemeContext = createContext<ThemeContextValue>({
 });
 
 /** Inlined in <head> so the correct theme paints before hydration. */
-export const themeBootstrapScript = `(function(){try{var t=localStorage.getItem('${STORAGE_KEY}')||'system';var d=t==='dark'||(t==='system'&&window.matchMedia('(prefers-color-scheme: dark)').matches);document.documentElement.classList.toggle('dark',d);}catch(e){document.documentElement.classList.add('dark');}})();`;
+export const themeBootstrapScript = `(function(){try{var t=localStorage.getItem('${STORAGE_KEY}')||'system';var d=t==='dark'||(t==='system'&&window.matchMedia('(prefers-color-scheme: dark)').matches);if(d){document.documentElement.removeAttribute('data-theme');}else{document.documentElement.setAttribute('data-theme','light');}}catch(e){}})();`;
 
 function systemPrefersDark() {
   if (typeof window === "undefined") return true;
@@ -32,7 +32,8 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
 
   const apply = useCallback((next: Theme) => {
     const dark = next === "dark" || (next === "system" && systemPrefersDark());
-    document.documentElement.classList.toggle("dark", dark);
+    if (dark) document.documentElement.removeAttribute("data-theme");
+    else document.documentElement.setAttribute("data-theme", "light");
     setResolved(dark ? "dark" : "light");
   }, []);
 
