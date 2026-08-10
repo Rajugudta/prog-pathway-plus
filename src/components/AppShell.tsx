@@ -1,5 +1,6 @@
 import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import { useState, type ReactNode } from "react";
+import { motion } from "motion/react";
 import {
   Binary,
   BookOpen,
@@ -13,12 +14,12 @@ import {
   PanelLeftOpen,
   Trophy,
   LogOut,
-
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
+import { ThemeToggle } from "@/components/ThemeProvider";
 
 const NAV = [
   { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
@@ -30,8 +31,20 @@ const NAV = [
   { to: "/roadmaps", label: "Roadmaps", icon: MapIcon },
   { to: "/placement", label: "Placement Hub", icon: GraduationCap },
   { to: "/achievements", label: "Achievements", icon: Trophy },
-
 ] as const;
+
+/** Primary tabs surfaced in the mobile bottom bar. */
+const TABS = [
+  { to: "/dashboard", label: "Home", icon: LayoutDashboard },
+  { to: "/problems", label: "Practice", icon: Braces },
+  { to: "/placement", label: "Placement", icon: GraduationCap },
+  { to: "/interviews", label: "Mocks", icon: Mic },
+  { to: "/learn", label: "Lectures", icon: BookOpen },
+] as const;
+
+function isActive(pathname: string, to: string) {
+  return pathname === to || pathname.startsWith(`${to}/`);
+}
 
 export function AppShell({
   children,
@@ -51,7 +64,7 @@ export function AppShell({
 
   const signOut = async () => {
     await supabase.auth.signOut();
-    navigate({ to: "/auth" });
+    navigate({ to: "/auth", replace: true });
   };
 
   return (
@@ -69,24 +82,32 @@ export function AppShell({
           {!collapsed && (
             <div className="min-w-0">
               <p className="truncate text-sm font-semibold tracking-tight">CodeDev</p>
-              <p className="truncate text-[11px] text-muted-foreground">Engineering prep studio</p>
+              <p className="truncate text-[11px] text-muted-foreground">Placement prep studio</p>
             </div>
           )}
         </div>
 
         <nav className="flex flex-1 flex-col gap-1 px-3 py-2">
           {NAV.map((item) => {
-            const active = pathname === item.to || pathname.startsWith(`${item.to}/`);
+            const active = isActive(pathname, item.to);
             return (
               <Link
                 key={item.to}
                 to={item.to}
+                aria-current={active ? "page" : undefined}
                 className={cn(
-                  "group flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-sidebar-foreground/80 transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
-                  active && "bg-sidebar-accent text-sidebar-accent-foreground",
+                  "group relative flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-sidebar-foreground/80 transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
+                  active && "text-sidebar-accent-foreground",
                 )}
                 title={item.label}
               >
+                {active && (
+                  <motion.span
+                    layoutId="sidebar-active"
+                    transition={{ type: "spring", stiffness: 420, damping: 34 }}
+                    className="absolute inset-0 -z-10 rounded-lg bg-sidebar-accent"
+                  />
+                )}
                 <span
                   className={cn(
                     "h-5 w-[3px] shrink-0 rounded-full transition-colors",
@@ -101,6 +122,7 @@ export function AppShell({
         </nav>
 
         <div className="border-t border-sidebar-border p-3">
+          {!collapsed && <ThemeToggle className="mb-2 w-fit" />}
           <button
             onClick={() => setCollapsed((c) => !c)}
             className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm text-muted-foreground transition-colors hover:bg-sidebar-accent hover:text-foreground"
@@ -119,13 +141,14 @@ export function AppShell({
       </aside>
 
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="sticky top-0 z-20 flex flex-wrap items-center justify-between gap-3 border-b border-border bg-background/70 px-4 py-3 backdrop-blur-xl md:px-8">
+        <header className="sticky top-0 z-20 grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 border-b border-border bg-background/70 px-4 py-3 backdrop-blur-xl md:px-8">
           <div className="min-w-0">
             <h1 className="truncate text-lg font-semibold tracking-tight">{title}</h1>
             {subtitle && <p className="truncate text-xs text-muted-foreground">{subtitle}</p>}
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex shrink-0 items-center gap-2">
             {actions}
+            <ThemeToggle className="md:hidden" />
             <span className="hidden max-w-[180px] truncate rounded-full border border-border bg-secondary px-3 py-1.5 text-xs text-muted-foreground sm:inline">
               {user?.email ?? "Signed in"}
             </span>
@@ -144,7 +167,41 @@ export function AppShell({
           ))}
         </div>
 
-        <main className="min-w-0 flex-1">{children}</main>
+        <main className="min-w-0 flex-1 pb-24 md:pb-0">{children}</main>
+
+        <nav
+          aria-label="Primary"
+          className="fixed inset-x-0 bottom-0 z-30 grid grid-cols-5 border-t border-border bg-background/85 px-1 pb-[env(safe-area-inset-bottom)] backdrop-blur-xl md:hidden"
+        >
+          {TABS.map((tab) => {
+            const active = isActive(pathname, tab.to);
+            return (
+              <Link
+                key={tab.to}
+                to={tab.to}
+                aria-current={active ? "page" : undefined}
+                className="relative flex flex-col items-center gap-1 px-1 py-2.5 text-[10px] font-medium"
+              >
+                {active && (
+                  <motion.span
+                    layoutId="tab-active"
+                    transition={{ type: "spring", stiffness: 420, damping: 34 }}
+                    className="absolute inset-x-2 top-1 h-9 rounded-xl bg-secondary"
+                  />
+                )}
+                <tab.icon
+                  className={cn(
+                    "relative size-[18px] transition-colors",
+                    active ? "text-primary" : "text-muted-foreground",
+                  )}
+                />
+                <span className={cn("relative", active ? "text-foreground" : "text-muted-foreground")}>
+                  {tab.label}
+                </span>
+              </Link>
+            );
+          })}
+        </nav>
       </div>
     </div>
   );
@@ -157,13 +214,13 @@ export function PageSection({
   children: ReactNode;
   className?: string;
 }) {
-  return <div className={cn("mx-auto w-full max-w-6xl px-4 py-6 md:px-8 md:py-10", className)}>{children}</div>;
+  return (
+    <div className={cn("rise-in mx-auto w-full max-w-6xl px-4 py-6 md:px-8 md:py-10", className)}>{children}</div>
+  );
 }
 
 export function EmptyHint({ children }: { children: ReactNode }) {
-  return (
-    <div className="mica rounded-2xl p-8 text-center text-sm text-muted-foreground">{children}</div>
-  );
+  return <div className="mica rounded-2xl p-8 text-center text-sm text-muted-foreground">{children}</div>;
 }
 
 export { Button };
