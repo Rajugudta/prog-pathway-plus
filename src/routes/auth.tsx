@@ -148,102 +148,186 @@ function AuthPage() {
 
         <div className="mica rounded-2xl p-7">
           <h1 className="text-xl font-semibold tracking-tight">
-            {mode === "signin" ? "Welcome back" : "Create your studio"}
+            {mfaFactorId
+              ? "Two-factor verification"
+              : mode === "signin"
+                ? "Welcome back"
+                : mode === "signup"
+                  ? "Create your studio"
+                  : "Reset your password"}
           </h1>
           <p className="mt-1 text-sm text-muted-foreground">
-            {mode === "signin"
-              ? "Pick up right where you left off."
-              : "Progress, tutor threads and interview scores get saved to your account."}
+            {mfaFactorId
+              ? "Enter the 6-digit code from your authenticator app."
+              : mode === "signin"
+                ? "Pick up right where you left off."
+                : mode === "signup"
+                  ? "Progress, tutor threads and interview scores get saved to your account."
+                  : "We'll email you a secure link to choose a new password."}
           </p>
 
-          <div className="mt-6 space-y-3">
-            <Button
-              type="button"
-              variant="mica"
-              size="lg"
-              className="w-full"
-              disabled={busy}
-              onClick={signInWithGoogle}
-            >
-              <svg viewBox="0 0 24 24" className="mr-2 size-4" aria-hidden="true">
-                <path fill="#EA4335" d="M12 10.2v3.9h5.5a4.7 4.7 0 0 1-2 3.1l3.2 2.5c1.9-1.7 3-4.3 3-7.3 0-.7-.1-1.4-.2-2H12z" />
-                <path fill="#34A853" d="M6.6 14.3 5.9 15l-2.6 2c1.6 3.2 4.9 5.4 8.7 5.4 2.6 0 4.9-.9 6.5-2.4l-3.2-2.5c-.9.6-2 1-3.3 1-2.6 0-4.7-1.7-5.4-4z" />
-                <path fill="#4A90E2" d="M3.3 6.9A9.9 9.9 0 0 0 2.2 12c0 1.8.4 3.6 1.1 5.1l3.3-2.6a6 6 0 0 1 0-3.8z" />
-                <path fill="#FBBC05" d="M12 5.6c1.5 0 2.8.5 3.8 1.5l2.8-2.8C16.9 2.7 14.6 1.8 12 1.8c-3.8 0-7.1 2.2-8.7 5.4l3.3 2.6c.7-2.3 2.8-4.2 5.4-4.2z" />
-              </svg>
-              Continue with Google
-            </Button>
-            <div className="flex items-center gap-3">
-              <span className="h-px flex-1 bg-border" />
-              <span className="text-[11px] uppercase tracking-wider text-muted-foreground">or</span>
-              <span className="h-px flex-1 bg-border" />
-            </div>
-          </div>
-
-          {checkEmail ? (
-            <div className="mt-6 rounded-xl border border-border bg-secondary p-4 text-sm text-muted-foreground">
-              We sent a confirmation link to <span className="text-foreground">{email}</span>. Click it,
-              then come back and sign in.
-            </div>
-          ) : (
-            <form onSubmit={submit} className="mt-6 space-y-4">
-              {mode === "signup" && (
-                <div className="space-y-2">
-                  <Label htmlFor="name">Display name</Label>
-                  <Input
-                    id="name"
-                    value={displayName}
-                    onChange={(e) => setDisplayName(e.target.value)}
-                    placeholder="Ada Lovelace"
-                    autoComplete="name"
-                  />
-                </div>
-              )}
+          {mfaFactorId ? (
+            <form onSubmit={submitMfa} className="mt-6 space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
+                <Label htmlFor="mfa">Authentication code</Label>
                 <Input
-                  id="email"
-                  type="email"
-                  required
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="you@college.edu"
-                  autoComplete="email"
+                  id="mfa"
+                  value={mfaCode}
+                  inputMode="numeric"
+                  autoComplete="one-time-code"
+                  onChange={(e) => setMfaCode(e.target.value.replace(/\D/g, "").slice(0, 6))}
+                  placeholder="123456"
+                  className="font-mono tracking-[0.4em]"
                 />
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="password">Password</Label>
-                <Input
-                  id="password"
-                  type="password"
-                  required
-                  minLength={6}
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="••••••••"
-                  autoComplete={mode === "signin" ? "current-password" : "new-password"}
-                />
-              </div>
-              <Button type="submit" variant="hero" size="lg" className="w-full" disabled={busy}>
-                {busy ? "Working…" : mode === "signin" ? "Sign in" : "Create account"}
+              <Button
+                type="submit"
+                variant="hero"
+                size="lg"
+                className="w-full"
+                disabled={busy || mfaCode.length !== 6}
+              >
+                {busy ? "Verifying…" : "Verify and continue"}
               </Button>
             </form>
-          )}
+          ) : (
+            <>
+              {mode !== "forgot" && (
+                <div className="mt-6 space-y-3">
+                  <Button
+                    type="button"
+                    variant="mica"
+                    size="lg"
+                    className="w-full"
+                    disabled={busy}
+                    onClick={signInWithGoogle}
+                  >
+                    <svg viewBox="0 0 24 24" className="mr-2 size-4" aria-hidden="true">
+                      <path fill="#EA4335" d="M12 10.2v3.9h5.5a4.7 4.7 0 0 1-2 3.1l3.2 2.5c1.9-1.7 3-4.3 3-7.3 0-.7-.1-1.4-.2-2H12z" />
+                      <path fill="#34A853" d="M6.6 14.3 5.9 15l-2.6 2c1.6 3.2 4.9 5.4 8.7 5.4 2.6 0 4.9-.9 6.5-2.4l-3.2-2.5c-.9.6-2 1-3.3 1-2.6 0-4.7-1.7-5.4-4z" />
+                      <path fill="#4A90E2" d="M3.3 6.9A9.9 9.9 0 0 0 2.2 12c0 1.8.4 3.6 1.1 5.1l3.3-2.6a6 6 0 0 1 0-3.8z" />
+                      <path fill="#FBBC05" d="M12 5.6c1.5 0 2.8.5 3.8 1.5l2.8-2.8C16.9 2.7 14.6 1.8 12 1.8c-3.8 0-7.1 2.2-8.7 5.4l3.3 2.6c.7-2.3 2.8-4.2 5.4-4.2z" />
+                    </svg>
+                    Continue with Google
+                  </Button>
+                  <div className="flex items-center gap-3">
+                    <span className="h-px flex-1 bg-border" />
+                    <span className="text-[11px] uppercase tracking-wider text-muted-foreground">or</span>
+                    <span className="h-px flex-1 bg-border" />
+                  </div>
+                </div>
+              )}
 
-          <p className="mt-6 text-center text-xs text-muted-foreground">
-            {mode === "signin" ? "New here?" : "Already have an account?"}{" "}
-            <button
-              type="button"
-              className="text-primary hover:underline"
-              onClick={() => {
-                setMode(mode === "signin" ? "signup" : "signin");
-                setCheckEmail(false);
-              }}
-            >
-              {mode === "signin" ? "Create an account" : "Sign in"}
-            </button>
-          </p>
+              {checkEmail || resetSent ? (
+                <div className="mt-6 rounded-xl border border-border bg-secondary p-4 text-sm text-muted-foreground">
+                  {resetSent ? (
+                    <>
+                      We sent a password reset link to <span className="text-foreground">{email}</span>. The
+                      link opens the reset page on this site — never enter it anywhere else.
+                    </>
+                  ) : (
+                    <>
+                      We sent a confirmation link to <span className="text-foreground">{email}</span>. Click
+                      it, then come back and sign in.
+                    </>
+                  )}
+                </div>
+              ) : (
+                <form onSubmit={submit} className="mt-6 space-y-4">
+                  {mode === "signup" && (
+                    <div className="space-y-2">
+                      <Label htmlFor="name">Display name</Label>
+                      <Input
+                        id="name"
+                        value={displayName}
+                        onChange={(e) => setDisplayName(e.target.value)}
+                        placeholder="Ada Lovelace"
+                        autoComplete="name"
+                      />
+                    </div>
+                  )}
+                  <div className="space-y-2">
+                    <Label htmlFor="email">Email</Label>
+                    <Input
+                      id="email"
+                      type="email"
+                      required
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      placeholder="you@college.edu"
+                      autoComplete="email"
+                    />
+                  </div>
+                  {mode !== "forgot" && (
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between">
+                        <Label htmlFor="password">Password</Label>
+                        {mode === "signin" && (
+                          <button
+                            type="button"
+                            className="text-xs text-primary hover:underline"
+                            onClick={() => setMode("forgot")}
+                          >
+                            Forgot password?
+                          </button>
+                        )}
+                      </div>
+                      <Input
+                        id="password"
+                        type="password"
+                        required
+                        minLength={6}
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        placeholder="••••••••"
+                        autoComplete={mode === "signin" ? "current-password" : "new-password"}
+                      />
+                    </div>
+                  )}
+                  <Button type="submit" variant="hero" size="lg" className="w-full" disabled={busy}>
+                    {busy
+                      ? "Working…"
+                      : mode === "signin"
+                        ? "Sign in"
+                        : mode === "signup"
+                          ? "Create account"
+                          : "Send reset link"}
+                  </Button>
+                </form>
+              )}
+
+              <p className="mt-6 text-center text-xs text-muted-foreground">
+                {mode === "forgot" ? (
+                  <button
+                    type="button"
+                    className="text-primary hover:underline"
+                    onClick={() => {
+                      setMode("signin");
+                      setResetSent(false);
+                    }}
+                  >
+                    Back to sign in
+                  </button>
+                ) : (
+                  <>
+                    {mode === "signin" ? "New here?" : "Already have an account?"}{" "}
+                    <button
+                      type="button"
+                      className="text-primary hover:underline"
+                      onClick={() => {
+                        setMode(mode === "signin" ? "signup" : "signin");
+                        setCheckEmail(false);
+                      }}
+                    >
+                      {mode === "signin" ? "Create an account" : "Sign in"}
+                    </button>
+                  </>
+                )}
+              </p>
+            </>
+          )}
         </div>
+
 
         <p className="mt-4 text-center text-[11px] leading-relaxed text-muted-foreground">
           CodeDev will never ask for payment, OTPs or your password over chat, email or social media.
