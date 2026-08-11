@@ -1,5 +1,7 @@
 import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
-import { useState, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useServerFn } from "@tanstack/react-start";
 import { motion } from "motion/react";
 import {
   Binary,
@@ -13,6 +15,7 @@ import {
   PanelLeftClose,
   PanelLeftOpen,
   Trophy,
+  ShieldCheck,
   LogOut,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -20,6 +23,9 @@ import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { ThemeToggle } from "@/components/ThemeProvider";
+import { useAutoLogout } from "@/hooks/useAutoLogout";
+import { describeDevice } from "@/lib/device";
+import { getSecurityOverview, recordLogin } from "@/lib/security.functions";
 
 const NAV = [
   { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
@@ -31,6 +37,7 @@ const NAV = [
   { to: "/roadmaps", label: "Roadmaps", icon: MapIcon },
   { to: "/placement", label: "Placement Hub", icon: GraduationCap },
   { to: "/achievements", label: "Achievements", icon: Trophy },
+  { to: "/settings", label: "Security & privacy", icon: ShieldCheck },
 ] as const;
 
 /** Primary tabs surfaced in the mobile bottom bar. */
@@ -60,9 +67,31 @@ export function AppShell({
   const [collapsed, setCollapsed] = useState(false);
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const { user } = useAuth();
 
+  const fetchOverview = useServerFn(getSecurityOverview);
+  const logLogin = useServerFn(recordLogin);
+  const security = useQuery({
+    queryKey: ["security"],
+    queryFn: () => fetchOverview(),
+    staleTime: 5 * 60 * 1000,
+  });
+
+  useAutoLogout(security.data?.settings?.auto_logout_minutes);
+
+  const logged = useRef(false);
+  useEffect(() => {
+    if (!user || logged.current) return;
+    logged.current = true;
+    const info = describeDevice();
+    const method = user.app_metadata?.provider === "google" ? "google" : "password";
+    void logLogin({ data: { ...info, method } }).catch(() => undefined);
+  }, [user, logLogin]);
+
   const signOut = async () => {
+    await queryClient.cancelQueries();
+    queryClient.clear();
     await supabase.auth.signOut();
     navigate({ to: "/auth", replace: true });
   };
