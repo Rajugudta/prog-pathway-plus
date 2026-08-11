@@ -183,11 +183,17 @@ function ChangePasswordCard() {
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (password !== confirm) return toast.error("Passwords don't match.");
+    if (password !== confirm) {
+      toast.error("Passwords don't match.");
+      return;
+    }
     setBusy(true);
     const { error } = await supabase.auth.updateUser({ password });
     setBusy(false);
-    if (error) return toast.error(error.message);
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
     setPassword("");
     setConfirm("");
     toast.success("Password changed");
@@ -252,7 +258,10 @@ function TwoFactorCard() {
       friendlyName: `Authenticator ${Date.now()}`,
     });
     setBusy(false);
-    if (error || !data) return toast.error(error?.message ?? "Could not start setup");
+    if (error || !data) {
+      toast.error(error?.message ?? "Could not start setup");
+      return;
+    }
     setEnrolling({ id: data.id, qr: data.totp.qr_code, secret: data.totp.secret });
   };
 
@@ -262,7 +271,8 @@ function TwoFactorCard() {
     const challenge = await supabase.auth.mfa.challenge({ factorId: enrolling.id });
     if (challenge.error || !challenge.data) {
       setBusy(false);
-      return toast.error(challenge.error?.message ?? "Could not verify");
+      toast.error(challenge.error?.message ?? "Could not verify");
+      return;
     }
     const { error } = await supabase.auth.mfa.verify({
       factorId: enrolling.id,
@@ -270,7 +280,10 @@ function TwoFactorCard() {
       code,
     });
     setBusy(false);
-    if (error) return toast.error(error.message);
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
     setEnrolling(null);
     setCode("");
     toast.success("Two-factor authentication is on");
@@ -279,7 +292,10 @@ function TwoFactorCard() {
 
   const disable = async (factorId: string) => {
     const { error } = await supabase.auth.mfa.unenroll({ factorId });
-    if (error) return toast.error(error.message);
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
     toast.success("Two-factor authentication removed");
     void load();
   };
