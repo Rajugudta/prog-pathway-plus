@@ -70,14 +70,16 @@ export const updateSettings = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input: unknown) => settingsSchema.parse(input))
   .handler(async ({ context, data }) => {
+    const patch = Object.fromEntries(Object.entries(data).filter(([, v]) => v !== undefined));
     const { data: row, error } = await context.supabase
       .from("user_settings")
-      .upsert({ user_id: context.userId, ...data }, { onConflict: "user_id" })
+      .upsert({ user_id: context.userId, ...patch } as never, { onConflict: "user_id" })
       .select(SETTINGS_COLUMNS)
       .maybeSingle();
     if (error) throw new Error(error.message);
     return (row as UserSettings | null) ?? DEFAULTS;
   });
+
 
 export const recordLogin = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
