@@ -38,6 +38,42 @@ export type Database = {
         }
         Relationships: []
       }
+      company_applications: {
+        Row: {
+          applied_on: string | null
+          company_id: string
+          created_at: string
+          id: string
+          next_step_on: string | null
+          notes: string | null
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          applied_on?: string | null
+          company_id: string
+          created_at?: string
+          id?: string
+          next_step_on?: string | null
+          notes?: string | null
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          applied_on?: string | null
+          company_id?: string
+          created_at?: string
+          id?: string
+          next_step_on?: string | null
+          notes?: string | null
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       interview_sessions: {
         Row: {
           created_at: string
@@ -208,34 +244,61 @@ export type Database = {
       profiles: {
         Row: {
           avatar_url: string | null
+          college: string | null
           created_at: string
           display_name: string
+          github_url: string | null
+          grad_year: number | null
+          headline: string | null
           id: string
           last_active_day: string
           level: number
+          linkedin_url: string | null
+          location: string | null
+          portfolio_url: string | null
+          skills: string[]
           streak: number
+          target_role: string | null
           updated_at: string
           xp: number
         }
         Insert: {
           avatar_url?: string | null
+          college?: string | null
           created_at?: string
           display_name?: string
+          github_url?: string | null
+          grad_year?: number | null
+          headline?: string | null
           id: string
           last_active_day?: string
           level?: number
+          linkedin_url?: string | null
+          location?: string | null
+          portfolio_url?: string | null
+          skills?: string[]
           streak?: number
+          target_role?: string | null
           updated_at?: string
           xp?: number
         }
         Update: {
           avatar_url?: string | null
+          college?: string | null
           created_at?: string
           display_name?: string
+          github_url?: string | null
+          grad_year?: number | null
+          headline?: string | null
           id?: string
           last_active_day?: string
           level?: number
+          linkedin_url?: string | null
+          location?: string | null
+          portfolio_url?: string | null
+          skills?: string[]
           streak?: number
+          target_role?: string | null
           updated_at?: string
           xp?: number
         }
