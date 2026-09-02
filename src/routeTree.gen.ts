@@ -19,6 +19,7 @@ import { Route as AuthenticatedDsaRouteImport } from './routes/_authenticated/ds
 import { Route as AuthenticatedLearnRouteImport } from './routes/_authenticated/learn'
 import { Route as AuthenticatedPlacementRouteImport } from './routes/_authenticated/placement'
 import { Route as AuthenticatedProblemsRouteImport } from './routes/_authenticated/problems'
+import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticated/profile'
 import { Route as AuthenticatedRoadmapsRouteImport } from './routes/_authenticated/roadmaps'
 import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticated/settings'
 import { Route as ApiChatRouteImport } from './routes/api/chat'
@@ -77,6 +78,11 @@ const AuthenticatedProblemsRoute = AuthenticatedProblemsRouteImport.update({
   path: '/problems',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedProfileRoute = AuthenticatedProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedRoadmapsRoute = AuthenticatedRoadmapsRouteImport.update({
   id: '/roadmaps',
   path: '/roadmaps',
@@ -126,6 +132,7 @@ export interface FileRoutesByFullPath {
   '/learn': typeof AuthenticatedLearnRoute
   '/placement': typeof AuthenticatedPlacementRoute
   '/problems': typeof AuthenticatedProblemsRoute
+  '/profile': typeof AuthenticatedProfileRoute
   '/roadmaps': typeof AuthenticatedRoadmapsRoute
   '/settings': typeof AuthenticatedSettingsRoute
   '/api/chat': typeof ApiChatRoute
@@ -144,6 +151,7 @@ export interface FileRoutesByTo {
   '/learn': typeof AuthenticatedLearnRoute
   '/placement': typeof AuthenticatedPlacementRoute
   '/problems': typeof AuthenticatedProblemsRoute
+  '/profile': typeof AuthenticatedProfileRoute
   '/roadmaps': typeof AuthenticatedRoadmapsRoute
   '/settings': typeof AuthenticatedSettingsRoute
   '/api/chat': typeof ApiChatRoute
@@ -164,6 +172,7 @@ export interface FileRoutesById {
   '/_authenticated/learn': typeof AuthenticatedLearnRoute
   '/_authenticated/placement': typeof AuthenticatedPlacementRoute
   '/_authenticated/problems': typeof AuthenticatedProblemsRoute
+  '/_authenticated/profile': typeof AuthenticatedProfileRoute
   '/_authenticated/roadmaps': typeof AuthenticatedRoadmapsRoute
   '/_authenticated/settings': typeof AuthenticatedSettingsRoute
   '/api/chat': typeof ApiChatRoute
@@ -184,6 +193,7 @@ export interface FileRouteTypes {
     | '/learn'
     | '/placement'
     | '/problems'
+    | '/profile'
     | '/roadmaps'
     | '/settings'
     | '/api/chat'
@@ -202,6 +212,7 @@ export interface FileRouteTypes {
     | '/learn'
     | '/placement'
     | '/problems'
+    | '/profile'
     | '/roadmaps'
     | '/settings'
     | '/api/chat'
@@ -221,6 +232,7 @@ export interface FileRouteTypes {
     | '/_authenticated/learn'
     | '/_authenticated/placement'
     | '/_authenticated/problems'
+    | '/_authenticated/profile'
     | '/_authenticated/roadmaps'
     | '/_authenticated/settings'
     | '/api/chat'
@@ -310,6 +322,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedProblemsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/profile': {
+      id: '/_authenticated/profile'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof AuthenticatedProfileRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/roadmaps': {
       id: '/_authenticated/roadmaps'
       path: '/roadmaps'
@@ -369,6 +388,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedLearnRoute: typeof AuthenticatedLearnRoute
   AuthenticatedPlacementRoute: typeof AuthenticatedPlacementRoute
   AuthenticatedProblemsRoute: typeof AuthenticatedProblemsRoute
+  AuthenticatedProfileRoute: typeof AuthenticatedProfileRoute
   AuthenticatedRoadmapsRoute: typeof AuthenticatedRoadmapsRoute
   AuthenticatedSettingsRoute: typeof AuthenticatedSettingsRoute
   AuthenticatedInterviewsInterviewIdRoute: typeof AuthenticatedInterviewsInterviewIdRoute
@@ -384,6 +404,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedLearnRoute: AuthenticatedLearnRoute,
   AuthenticatedPlacementRoute: AuthenticatedPlacementRoute,
   AuthenticatedProblemsRoute: AuthenticatedProblemsRoute,
+  AuthenticatedProfileRoute: AuthenticatedProfileRoute,
   AuthenticatedRoadmapsRoute: AuthenticatedRoadmapsRoute,
   AuthenticatedSettingsRoute: AuthenticatedSettingsRoute,
   AuthenticatedInterviewsInterviewIdRoute:

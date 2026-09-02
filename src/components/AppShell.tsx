@@ -37,6 +37,7 @@ const NAV = [
   { to: "/roadmaps", label: "Roadmaps", icon: MapIcon },
   { to: "/placement", label: "Placement Hub", icon: GraduationCap },
   { to: "/achievements", label: "Achievements", icon: Trophy },
+  { to: "/profile", label: "Profile", icon: UserRound },
   { to: "/settings", label: "Security & privacy", icon: ShieldCheck },
 ] as const;
 
