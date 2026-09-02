@@ -57,7 +57,7 @@ function ProfilePage() {
   const solvedByDifficulty = useMemo(() => {
     const solved = new Set(progress.data?.solved ?? []);
     const out = { Easy: 0, Medium: 0, Hard: 0 } as Record<string, number>;
-    for (const pr of PROBLEMS) if (solved.has(pr.id)) out[pr.difficulty] = (out[pr.difficulty] ?? 0) + 1;
+    for (const pr of PROBLEMS) if (solved.has(String(pr.id))) out[pr.difficulty] = (out[pr.difficulty] ?? 0) + 1;
     return out;
   }, [progress.data]);
 
