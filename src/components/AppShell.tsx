@@ -16,6 +16,7 @@ import {
   PanelLeftOpen,
   Trophy,
   ShieldCheck,
+  UserRound,
   LogOut,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
