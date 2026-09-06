@@ -138,13 +138,68 @@ function AuthPage() {
   return (
     <div className="relative flex min-h-screen items-center justify-center overflow-hidden px-4 py-12">
       <div className="pointer-events-none absolute inset-x-0 -top-40 h-[420px] bg-gradient-primary opacity-20 blur-[120px]" />
-      <div className="relative w-full max-w-md">
-        <Link to="/" className="mb-6 flex items-center gap-3">
-          <div className="grid size-9 place-items-center rounded-xl bg-gradient-primary text-sm font-bold text-primary-foreground">
-            {"</>"}
+
+      {/* Immersive visual panel — hidden on small screens */}
+      <div className="pointer-events-none absolute inset-0 hidden lg:block" aria-hidden="true">
+        <img
+          src={heroAsset.url}
+          alt=""
+          width={1536}
+          height={1024}
+          className="h-full w-full object-cover opacity-40"
+        />
+        <div className="absolute inset-0 bg-gradient-to-r from-background via-background/70 to-background/40" />
+        <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-background/60" />
+      </div>
+
+      <div className="relative grid w-full max-w-5xl items-center gap-10 lg:grid-cols-2">
+        {/* Brand pitch panel */}
+        <div className="hidden lg:block">
+          <div className="mica relative overflow-hidden rounded-3xl">
+            <img
+              src={heroAsset.url}
+              alt="Developer preparing for placements with roadmap, progress and interview dashboards"
+              width={1536}
+              height={1024}
+              className="aspect-[4/3] w-full object-cover"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-background/95 via-background/20 to-transparent" />
+
+            {/* Floating chips, inspired by the dashboard mockup */}
+            <div className="absolute left-4 top-4 animate-pulse rounded-xl border border-border/60 bg-background/70 px-3 py-2 backdrop-blur-md [animation-duration:4s]">
+              <p className="text-[10px] uppercase tracking-wider text-muted-foreground">Roadmap</p>
+              <p className="text-xs font-semibold">DSA Fundamentals · 100%</p>
+              <div className="mt-1 h-1 w-36 overflow-hidden rounded-full bg-secondary">
+                <div className="h-full w-full rounded-full bg-primary" />
+              </div>
+            </div>
+            <div className="absolute right-4 top-24 rounded-xl border border-border/60 bg-background/70 px-3 py-2 backdrop-blur-md">
+              <p className="text-[10px] uppercase tracking-wider text-muted-foreground">Mock score</p>
+              <p className="text-xs font-semibold text-primary">726 / 1000 · Keep practicing!</p>
+            </div>
+
+            <div className="absolute inset-x-0 bottom-0 p-6">
+              <h2 className="text-3xl font-bold leading-tight tracking-tight">
+                CODE. LEARN.
+                <br />
+                PREPARE. <span className="text-primary">GET HIRED.</span>
+              </h2>
+              <p className="mt-2 max-w-sm text-sm text-muted-foreground">
+                Lectures, 500+ problems, voice mock interviews and a placement hub — all in one
+                studio.
+              </p>
+            </div>
           </div>
-          <span className="text-sm font-semibold tracking-tight">CodeDev</span>
-        </Link>
+        </div>
+
+        {/* Auth card */}
+        <div className="relative mx-auto w-full max-w-md">
+          <Link to="/" className="mb-6 flex items-center gap-3">
+            <div className="grid size-9 place-items-center rounded-xl bg-gradient-primary text-sm font-bold text-primary-foreground">
+              {"</>"}
+            </div>
+            <span className="text-sm font-semibold tracking-tight">CodeDev</span>
+          </Link>
 
         <div className="mica rounded-2xl p-7">
           <h1 className="text-xl font-semibold tracking-tight">
