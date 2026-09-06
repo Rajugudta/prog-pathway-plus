@@ -23,7 +23,7 @@ export async function reviewCode(input: {
   language: string;
   code: string;
 }): Promise<SolutionReview> {
-  const gateway = createLovableAiGatewayProvider(requireGatewayKey());
+  const gateway = createLovableAiGatewayProvider(requireGatewayKey(), { structuredOutputs: true });
 
   const prompt = [
     `Problem: ${input.title} (${input.difficulty}, ${input.topic})`,

@@ -48,21 +48,21 @@ export async function synthesizeSpeech(text: string, voice: string): Promise<str
 }
 
 export const reportSchema = z.object({
-  overall: z.number().min(0).max(100),
+  overall: z.number(),
   verdict: z.string(),
   recommendation: z.enum(["strong-hire", "hire", "borderline", "no-hire"]),
   scores: z.object({
-    communication: z.number().min(0).max(10),
-    problemSolving: z.number().min(0).max(10),
-    technicalDepth: z.number().min(0).max(10),
-    structure: z.number().min(0).max(10),
-    confidence: z.number().min(0).max(10),
+    communication: z.number(),
+    problemSolving: z.number(),
+    technicalDepth: z.number(),
+    structure: z.number(),
+    confidence: z.number(),
   }),
-  strengths: z.array(z.string()).max(5),
-  improvements: z.array(z.object({ title: z.string(), detail: z.string() })).max(5),
-  missedPoints: z.array(z.string()).max(5),
+  strengths: z.array(z.string()),
+  improvements: z.array(z.object({ title: z.string(), detail: z.string() })),
+  missedPoints: z.array(z.string()),
   betterAnswer: z.string(),
-  nextSteps: z.array(z.string()).max(4),
+  nextSteps: z.array(z.string()),
 });
 
 export type InterviewReport = z.infer<typeof reportSchema>;
@@ -82,7 +82,7 @@ export async function gradeInterview(input: {
   durationSeconds: number;
   transcript: { role: "interviewer" | "candidate"; text: string }[];
 }): Promise<InterviewReport> {
-  const gateway = createLovableAiGatewayProvider(requireGatewayKey());
+  const gateway = createLovableAiGatewayProvider(requireGatewayKey(), { structuredOutputs: true });
   const minutes = Math.max(1, Math.round(input.durationSeconds / 60));
 
   const prompt = [
@@ -94,6 +94,7 @@ export async function gradeInterview(input: {
     "",
     "Write the debrief. `betterAnswer` = a model answer (6-10 sentences) for the weakest question,",
     "written in a natural spoken voice the candidate could actually say out loud.",
+    "Limits: overall 0-100, each score 0-10, at most 5 strengths, 5 improvements, 5 missed points, 4 next steps.",
   ].join("\n");
 
   try {
