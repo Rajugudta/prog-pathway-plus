@@ -4,10 +4,15 @@ import { createOpenAICompatible } from "@ai-sdk/openai-compatible";
  * Server-only helper that connects the AI SDK to the Lovable AI Gateway.
  * Never import this from client code.
  */
-export function createLovableAiGatewayProvider(apiKey: string) {
+export function createLovableAiGatewayProvider(
+  apiKey: string,
+  options?: { structuredOutputs?: boolean },
+) {
   return createOpenAICompatible({
     name: "lovable",
     baseURL: "https://ai.gateway.lovable.dev/v1",
+    // Strict json_schema is required for schema-enforced structured output.
+    supportsStructuredOutputs: options?.structuredOutputs ?? false,
     headers: { "Lovable-API-Key": apiKey },
   });
 }
