@@ -140,18 +140,6 @@ function AuthPage() {
     <div className="relative flex min-h-screen items-center justify-center overflow-hidden px-4 py-12">
       <div className="pointer-events-none absolute inset-x-0 -top-40 h-[420px] bg-gradient-primary opacity-20 blur-[120px]" />
 
-      {/* Immersive visual panel — hidden on small screens */}
-      <div className="pointer-events-none absolute inset-0 hidden lg:block" aria-hidden="true">
-        <img
-          src={heroAsset.url}
-          alt=""
-          width={1536}
-          height={1024}
-          className="h-full w-full object-cover opacity-40"
-        />
-        <div className="absolute inset-0 bg-gradient-to-r from-background via-background/70 to-background/40" />
-        <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-background/60" />
-      </div>
 
       <div className="relative grid w-full max-w-5xl items-center gap-10 lg:grid-cols-2">
         {/* Brand pitch panel */}
