@@ -307,11 +307,11 @@ export const LECTURES: Lecture[] = [
   {
     id: "aptitude",
     title: "Aptitude & Logical Reasoning for Placements",
-    author: "Placement prep",
+    author: "Love Babbar",
     track: "Placement",
     level: "Beginner",
-    minutes: 190,
-    videoId: "N5cRvOb9zGw",
+    minutes: 22,
+    videoId: "B8dZvuG2yEE",
     summary: "Percentages, ratios, time-and-work, permutations and puzzle patterns companies reuse.",
   },
 ];
