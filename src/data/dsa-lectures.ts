@@ -26,11 +26,11 @@ export const DSA_LECTURES: DsaLecture[] = [
   {
     id: "dsa-complexity",
     title: "Big-O, Time and Space Complexity",
-    author: "freeCodeCamp",
+    author: "CS Dojo",
     module: "Foundations",
     level: "Beginner",
-    minutes: 60,
-    videoId: "Mo4vesaut8g",
+    minutes: 20,
+    videoId: "D6xkbGLQesk",
     summary: "How to reason about growth rates before you write a single line of code.",
     keyIdeas: [
       "Constants and lower-order terms drop out of Big-O",
@@ -58,11 +58,11 @@ export const DSA_LECTURES: DsaLecture[] = [
   {
     id: "dsa-arrays",
     title: "Arrays, Prefix Sums and Two Pointers",
-    author: "Abdul Bari style",
+    author: "Josh's DevBox",
     module: "Linear structures",
     level: "Beginner",
-    minutes: 75,
-    videoId: "QSPeQqfd_wc",
+    minutes: 15,
+    videoId: "On03HWe2tZM",
     summary: "The single most tested family of patterns: sliding windows, prefix sums and pointer pairs.",
     keyIdeas: [
       "Prefix sums turn range-sum queries into O(1)",
@@ -371,11 +371,11 @@ export const DSA_LECTURES: DsaLecture[] = [
   {
     id: "dsa-backtracking",
     title: "Recursion, Backtracking and Pruning",
-    author: "Abdul Bari style",
+    author: "CS Dojo",
     module: "Recursion",
     level: "Intermediate",
-    minutes: 70,
-    videoId: "IY2eBEDafhg",
+    minutes: 25,
+    videoId: "B0NtAFf4bvU",
     summary: "N-Queens, subsets, permutations and how pruning turns exponential into feasible.",
     keyIdeas: [
       "Every backtracking solution is choose / explore / un-choose",
