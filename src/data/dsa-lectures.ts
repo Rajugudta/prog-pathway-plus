@@ -61,7 +61,7 @@ export const DSA_LECTURES: DsaLecture[] = [
     author: "Josh's DevBox",
     module: "Linear structures",
     level: "Beginner",
-    minutes: 75,
+    minutes: 15,
     videoId: "On03HWe2tZM",
     summary: "The single most tested family of patterns: sliding windows, prefix sums and pointer pairs.",
     keyIdeas: [
@@ -374,7 +374,7 @@ export const DSA_LECTURES: DsaLecture[] = [
     author: "CS Dojo",
     module: "Recursion",
     level: "Intermediate",
-    minutes: 70,
+    minutes: 25,
     videoId: "B0NtAFf4bvU",
     summary: "N-Queens, subsets, permutations and how pruning turns exponential into feasible.",
     keyIdeas: [
