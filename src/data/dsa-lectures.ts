@@ -29,7 +29,7 @@ export const DSA_LECTURES: DsaLecture[] = [
     author: "CS Dojo",
     module: "Foundations",
     level: "Beginner",
-    minutes: 60,
+    minutes: 20,
     videoId: "D6xkbGLQesk",
     summary: "How to reason about growth rates before you write a single line of code.",
     keyIdeas: [
@@ -58,7 +58,7 @@ export const DSA_LECTURES: DsaLecture[] = [
   {
     id: "dsa-arrays",
     title: "Arrays, Prefix Sums and Two Pointers",
-    author: "CS Dojo",
+    author: "Josh's DevBox",
     module: "Linear structures",
     level: "Beginner",
     minutes: 75,
