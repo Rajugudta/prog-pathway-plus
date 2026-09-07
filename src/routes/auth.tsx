@@ -191,6 +191,23 @@ function AuthPage() {
             <span className="text-sm font-semibold tracking-tight">CodeDev</span>
           </Link>
 
+          {/* Compact banner for phones */}
+          <div className="mica mb-5 overflow-hidden rounded-2xl lg:hidden">
+            <img
+              src={heroAsset.url}
+              alt="Developer preparing for placements"
+              width={1536}
+              height={1024}
+              className="h-28 w-full object-cover"
+            />
+            <div className="px-4 py-3">
+              <p className="text-sm font-bold tracking-tight">
+                CODE. LEARN. PREPARE. <span className="text-primary">GET HIRED.</span>
+              </p>
+            </div>
+          </div>
+
+
         <div className="mica rounded-2xl p-7">
           <h1 className="text-xl font-semibold tracking-tight">
             {mfaFactorId
