@@ -144,30 +144,30 @@ function AuthPage() {
       <div className="relative grid w-full max-w-5xl items-center gap-10 lg:grid-cols-2">
         {/* Brand pitch panel */}
         <div className="hidden lg:block">
-          <div className="mica relative overflow-hidden rounded-3xl">
-            <img
-              src={heroAsset.url}
-              alt="Developer preparing for placements with roadmap, progress and interview dashboards"
-              width={1536}
-              height={1024}
-              className="aspect-[4/3] w-full object-cover"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-background/95 via-background/20 to-transparent" />
-
-            {/* Floating chips, inspired by the dashboard mockup */}
-            <div className="absolute left-4 top-4 animate-pulse rounded-xl border border-border/60 bg-background/70 px-3 py-2 backdrop-blur-md [animation-duration:4s]">
-              <p className="text-[10px] uppercase tracking-wider text-muted-foreground">Roadmap</p>
-              <p className="text-xs font-semibold">DSA Fundamentals · 100%</p>
-              <div className="mt-1 h-1 w-36 overflow-hidden rounded-full bg-secondary">
-                <div className="h-full w-full rounded-full bg-primary" />
+          <div className="mica overflow-hidden rounded-3xl">
+            <div className="relative">
+              <img
+                src={heroAsset.url}
+                alt="Developer preparing for placements with roadmap, progress and interview dashboards"
+                width={1536}
+                height={1024}
+                className="aspect-[4/3] w-full object-cover"
+              />
+              {/* Floating chips, inspired by the dashboard mockup */}
+              <div className="absolute left-4 top-4 rounded-xl border border-border/60 bg-background/85 px-3 py-2 backdrop-blur-md">
+                <p className="text-[10px] uppercase tracking-wider text-muted-foreground">Roadmap</p>
+                <p className="text-xs font-semibold">DSA Fundamentals · 100%</p>
+                <div className="mt-1 h-1 w-36 overflow-hidden rounded-full bg-secondary">
+                  <div className="h-full w-full rounded-full bg-primary" />
+                </div>
+              </div>
+              <div className="absolute bottom-4 right-4 rounded-xl border border-border/60 bg-background/85 px-3 py-2 backdrop-blur-md">
+                <p className="text-[10px] uppercase tracking-wider text-muted-foreground">Mock score</p>
+                <p className="text-xs font-semibold text-primary">726 / 1000 · Keep practicing!</p>
               </div>
             </div>
-            <div className="absolute right-4 top-24 rounded-xl border border-border/60 bg-background/70 px-3 py-2 backdrop-blur-md">
-              <p className="text-[10px] uppercase tracking-wider text-muted-foreground">Mock score</p>
-              <p className="text-xs font-semibold text-primary">726 / 1000 · Keep practicing!</p>
-            </div>
 
-            <div className="absolute inset-x-0 bottom-0 p-6">
+            <div className="p-6">
               <h2 className="text-3xl font-bold leading-tight tracking-tight">
                 CODE. LEARN.
                 <br />
@@ -180,6 +180,7 @@ function AuthPage() {
             </div>
           </div>
         </div>
+
 
         {/* Auth card */}
         <div className="relative mx-auto w-full max-w-md">
