@@ -114,6 +114,17 @@ function DsaPage() {
                   </Button>
                 </div>
               </div>
+              <div className="border-t border-border px-5 pb-4 pt-3">
+                <p className="text-xs leading-relaxed text-muted-foreground">{active.summary}</p>
+                <a
+                  href={`https://www.youtube.com/watch?v=${active.videoId}`}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="mt-2 inline-block text-[11px] text-muted-foreground underline underline-offset-4 hover:text-foreground"
+                >
+                  Video not loading? Open it in a new tab
+                </a>
+              </div>
             </div>
 
             <div className="mica rounded-2xl p-5">
