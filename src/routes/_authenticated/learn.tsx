@@ -8,7 +8,7 @@ import { toast } from "sonner";
 import { AppShell, PageSection } from "@/components/AppShell";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { LECTURES, LECTURE_TRACKS, type Lecture } from "@/data/lectures";
+import { LECTURES, LECTURE_TRACKS, getLectureDetail, type Lecture } from "@/data/lectures";
 import { getProgress, toggleLectureComplete } from "@/lib/app.functions";
 import { celebrateBadges } from "@/lib/celebrate";
 
@@ -107,6 +107,39 @@ function LearnPage() {
                 </Button>
               </div>
             </div>
+            {(() => {
+              const detail = getLectureDetail(active.id);
+              if (!detail) return null;
+              return (
+                <div className="border-t border-border px-5 pb-5 pt-4">
+                  <h3 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                    About this lecture
+                  </h3>
+                  <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{detail.description}</p>
+                  <p className="mt-3 text-xs text-muted-foreground">
+                    <span className="text-foreground">Best for:</span> {detail.bestFor}
+                  </p>
+                  <div className="mt-4 flex flex-wrap gap-2">
+                    {detail.topics.map((t, i) => (
+                      <span
+                        key={t}
+                        className="rounded-full border border-border bg-secondary/60 px-2.5 py-1 text-[11px] text-muted-foreground"
+                      >
+                        {i + 1}. {t}
+                      </span>
+                    ))}
+                  </div>
+                  <a
+                    href={`https://www.youtube.com/watch?v=${active.videoId}`}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="mt-4 inline-block text-[11px] text-muted-foreground underline underline-offset-4 hover:text-foreground"
+                  >
+                    Video not loading? Open it in a new tab
+                  </a>
+                </div>
+              );
+            })()}
           </div>
         )}
 
