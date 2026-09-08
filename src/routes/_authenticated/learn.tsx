@@ -107,7 +107,6 @@ function LearnPage() {
                 </Button>
               </div>
             </div>
-          </div>
             {(() => {
               const detail = getLectureDetail(active.id);
               if (!detail) return null;
