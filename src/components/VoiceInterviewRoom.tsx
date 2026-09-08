@@ -139,10 +139,42 @@ export function VoiceInterviewRoom({ interview }: { interview: MockInterview }) 
     [askFn, elapsed, interview.id, play, totalSeconds],
   );
 
+  /** Ask for the mic once and keep the stream alive for the whole session. */
+  const openMicrophone = useCallback(async (): Promise<MediaStream> => {
+    if (streamRef.current && streamRef.current.getAudioTracks().some((t) => t.readyState === "live")) {
+      return streamRef.current;
+    }
+    if (typeof navigator === "undefined" || !navigator.mediaDevices?.getUserMedia) {
+      throw new Error("This browser can't record audio. Try Chrome, Edge or Safari.");
+    }
+    if (!window.isSecureContext) {
+      throw new Error("Microphone access needs a secure (https) connection.");
+    }
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({
+        audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true },
+      });
+      streamRef.current = stream;
+      setMicReady(true);
+      return stream;
+    } catch (err) {
+      const name = err instanceof DOMException ? err.name : "";
+      if (name === "NotAllowedError" || name === "SecurityError") {
+        throw new Error("Microphone blocked. Allow it from the padlock icon in the address bar, then try again.");
+      }
+      if (name === "NotFoundError" || name === "OverconstrainedError") {
+        throw new Error("No microphone found. Plug one in or pick another input device.");
+      }
+      if (name === "NotReadableError") {
+        throw new Error("Your microphone is being used by another app. Close it and try again.");
+      }
+      throw new Error("Could not open the microphone.");
+    }
+  }, []);
+
   const start = useCallback(async () => {
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      streamRef.current = stream;
+      await openMicrophone();
       setPhase("live");
       setElapsed(0);
       setTurns([]);
@@ -156,14 +188,31 @@ export function VoiceInterviewRoom({ interview }: { interview: MockInterview }) 
       ];
       setTurns(opener);
       await askInterviewer(opener);
-    } catch {
-      toast.error("Microphone access is required for a voice interview.");
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Microphone access is required for a voice interview.");
     }
-  }, [askInterviewer]);
+  }, [askInterviewer, openMicrophone]);
+
+  /** Stop the interviewer mid-sentence so the candidate can jump in. */
+  const stopSpeaking = useCallback(() => {
+    const el = playerRef.current;
+    if (el) {
+      el.pause();
+      el.currentTime = 0;
+      el.onended?.(new Event("ended"));
+    }
+    setThinking(null);
+  }, []);
 
   const beginRecording = useCallback(async () => {
-    const stream = streamRef.current;
-    if (!stream) return;
+    let stream: MediaStream;
+    try {
+      stream = await openMicrophone();
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Could not open the microphone.");
+      return;
+    }
+    stopSpeaking();
 
     const ctx = audioCtxRef.current ?? new AudioContext();
     audioCtxRef.current = ctx;
@@ -172,23 +221,49 @@ export function VoiceInterviewRoom({ interview }: { interview: MockInterview }) 
     analyser.fftSize = 512;
     ctx.createMediaStreamSource(stream).connect(analyser);
     const buf = new Uint8Array(analyser.frequencyBinCount);
+    const startedAt = Date.now();
+    let lastLoudAt = Date.now();
+    let heardSpeech = false;
     const tick = () => {
       analyser.getByteTimeDomainData(buf);
       let peak = 0;
       for (const v of buf) peak = Math.max(peak, Math.abs(v - 128) / 128);
       setLevel(peak);
+      if (peak > 0.045) {
+        lastLoudAt = Date.now();
+        heardSpeech = true;
+      }
+      // Auto-submit after a natural pause so the candidate never has to hunt for the stop button.
+      if (
+        autoStopRef.current &&
+        heardSpeech &&
+        Date.now() - startedAt > 2000 &&
+        Date.now() - lastLoudAt > 2500
+      ) {
+        rafRef.current = null;
+        void endRecordingRef.current?.();
+        return;
+      }
       rafRef.current = requestAnimationFrame(tick);
     };
     tick();
 
     chunksRef.current = [];
-    const mime = MediaRecorder.isTypeSupported("audio/webm") ? "audio/webm" : "audio/mp4";
-    const rec = new MediaRecorder(stream, { mimeType: mime });
+    const candidates = [
+      "audio/webm;codecs=opus",
+      "audio/webm",
+      "audio/mp4;codecs=mp4a.40.2",
+      "audio/mp4",
+      "audio/ogg;codecs=opus",
+    ];
+    const mime = candidates.find((m) => MediaRecorder.isTypeSupported?.(m));
+    const rec = mime ? new MediaRecorder(stream, { mimeType: mime }) : new MediaRecorder(stream);
     rec.ondataavailable = (e) => e.data.size > 0 && chunksRef.current.push(e.data);
+    rec.onerror = () => toast.error("Recording stopped unexpectedly. Try answering again.");
     rec.start();
     recorderRef.current = rec;
     setRecording(true);
-  }, []);
+  }, [openMicrophone, stopSpeaking]);
 
   const endRecording = useCallback(async () => {
     const rec = recorderRef.current;
