@@ -50,6 +50,11 @@ export function VoiceInterviewRoom({ interview }: { interview: MockInterview }) 
   const autoStopRef = useRef(true);
   autoStopRef.current = autoStop;
   const endRecordingRef = useRef<(() => Promise<void>) | null>(null);
+  const [, setMicReady] = useState(false);
+  const [autoStop, setAutoStop] = useState(true);
+  const autoStopRef = useRef(true);
+  autoStopRef.current = autoStop;
+  const endRecordingRef = useRef<(() => Promise<void>) | null>(null);
 
   const recorderRef = useRef<MediaRecorder | null>(null);
   const chunksRef = useRef<Blob[]>([]);
