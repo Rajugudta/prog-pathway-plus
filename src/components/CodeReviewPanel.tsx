@@ -76,7 +76,7 @@ export function CodeReviewPanel({ problem, language }: { problem: Problem; langu
           setTouched(true);
           setCode(e.target.value);
         }}
-        rows={14}
+        rows={18}
         className="w-full resize-y rounded-xl border border-border bg-background/70 p-4 font-mono text-xs leading-relaxed outline-none focus:ring-1 focus:ring-ring"
       />
 
