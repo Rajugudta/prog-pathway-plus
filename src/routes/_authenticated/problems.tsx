@@ -153,52 +153,127 @@ function ProblemsPage() {
         )}
 
         {open && (
-          <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/60 p-0 backdrop-blur-sm md:items-center md:p-6">
-            <div className="mica max-h-[88vh] w-full max-w-3xl overflow-y-auto rounded-t-2xl p-6 md:rounded-2xl">
-              <div className="flex items-start justify-between gap-4">
-                <div>
-                  <h2 className="text-lg font-semibold tracking-tight">{open.title}</h2>
-                  <p className="mt-1 text-xs text-muted-foreground">
-                    {open.difficulty} · {open.topic}
-                  </p>
-                </div>
-                <Button variant="ghost" size="sm" onClick={() => setOpen(null)}>
-                  Close
-                </Button>
-              </div>
-              <p className="mt-4 text-sm leading-relaxed text-muted-foreground">{open.statement}</p>
-
-              <div className="mt-5 flex flex-wrap gap-2">
-                {open.languages.map((l) => (
-                  <button
-                    key={l}
-                    onClick={() => setLanguage(l)}
-                    className={cn(
-                      "rounded-full border border-border px-3 py-1 text-[11px] text-muted-foreground hover:text-foreground",
-                      language === l && "bg-secondary text-foreground",
-                    )}
+          <div className="fixed inset-0 z-50 flex flex-col bg-background">
+            <div className="flex items-center gap-3 border-b border-border px-4 py-2.5">
+              <Button variant="ghost" size="sm" onClick={() => setOpen(null)}>
+                ← Problem list
+              </Button>
+              <span className="min-w-0 flex-1 truncate text-sm font-medium">{open.title}</span>
+              <Button
+                size="sm"
+                variant={solved.includes(open.slug) ? "secondary" : "hero"}
+                disabled={mark.isPending}
+                onClick={() => mark.mutate({ problemId: open.slug, solved: !solved.includes(open.slug) })}
+              >
+                <Check className="mr-1.5 size-4" />
+                {solved.includes(open.slug) ? "Solved" : "Submit as solved"}
+              </Button>
+            </div>
+            <div className="grid min-h-0 flex-1 overflow-y-auto lg:grid-cols-2 lg:overflow-hidden">
+              <ProblemDescription problem={open} solved={solved.includes(open.slug)} />
+              <div className="flex min-h-0 flex-col border-t border-border lg:border-l lg:border-t-0">
+                <div className="flex flex-wrap items-center gap-2 border-b border-border px-4 py-2">
+                  <span className="text-[11px] uppercase tracking-wide text-muted-foreground">Code</span>
+                  <select
+                    value={open.languages.includes(language) ? language : open.languages[0]}
+                    onChange={(e) => setLanguage(e.target.value)}
+                    className="rounded-md border border-border bg-secondary px-2 py-1 text-xs"
                   >
-                    {l}
-                  </button>
-                ))}
-              </div>
-
-              <CodeReviewPanel key={open.slug} problem={open} language={language} />
-
-
-              <div className="mt-5 flex justify-end">
-                <Button
-                  variant={solved.includes(open.slug) ? "secondary" : "hero"}
-                  onClick={() => mark.mutate({ problemId: open.slug, solved: !solved.includes(open.slug) })}
-                >
-                  <Check className="mr-1.5 size-4" />
-                  {solved.includes(open.slug) ? "Solved" : "Mark solved"}
-                </Button>
+                    {open.languages.map((l) => (
+                      <option key={l}>{l}</option>
+                    ))}
+                  </select>
+                </div>
+                <div className="min-h-0 flex-1 overflow-y-auto px-4 pb-6">
+                  <CodeReviewPanel
+                    key={`${open.slug}-${language}`}
+                    problem={open}
+                    language={open.languages.includes(language) ? language : (open.languages[0] ?? language)}
+                  />
+                </div>
               </div>
             </div>
           </div>
         )}
       </PageSection>
     </AppShell>
+  );
+}
+
+const TOPIC_HINTS: Record<string, string[]> = {
+  Arrays: ["Can a hash map remember what you've already seen?", "Try two pointers or a prefix sum before nested loops."],
+  Strings: ["Count characters with a fixed-size array or map.", "A sliding window often replaces re-scanning substrings."],
+  "Linked List": ["Draw the pointers before you move them.", "Fast and slow pointers find middles and cycles."],
+  Trees: ["Decide what each recursive call should return to its parent.", "BFS with a queue handles level-by-level questions."],
+  Graphs: ["Build an adjacency list first.", "Track visited nodes to avoid infinite loops."],
+  "Dynamic Programming": ["Define dp[i] in one sentence before coding.", "Write the brute-force recursion, then memoise it."],
+};
+
+function ProblemDescription({ problem, solved }: { problem: Problem; solved: boolean }) {
+  const [tab, setTab] = useState<"description" | "hints">("description");
+  const hints = TOPIC_HINTS[problem.topic] ?? [
+    "Start with the brute force and state its complexity.",
+    "Ask what repeated work you can cache or skip.",
+  ];
+  return (
+    <div className="flex min-h-0 flex-col">
+      <div className="flex gap-1 border-b border-border px-4 py-2">
+        {(["description", "hints"] as const).map((t) => (
+          <button
+            key={t}
+            onClick={() => setTab(t)}
+            className={cn(
+              "rounded-md px-3 py-1 text-xs capitalize text-muted-foreground hover:text-foreground",
+              tab === t && "bg-secondary text-foreground",
+            )}
+          >
+            {t}
+          </button>
+        ))}
+      </div>
+      <div className="min-h-0 flex-1 overflow-y-auto p-5">
+        {tab === "description" ? (
+          <>
+            <h2 className="text-xl font-semibold tracking-tight">{problem.title}</h2>
+            <div className="mt-3 flex flex-wrap items-center gap-2 text-[11px]">
+              <span
+                className={cn(
+                  "rounded-full bg-secondary px-2.5 py-1",
+                  problem.difficulty === "Easy" && "text-success",
+                  problem.difficulty === "Medium" && "text-warning",
+                  problem.difficulty === "Hard" && "text-destructive",
+                )}
+              >
+                {problem.difficulty}
+              </span>
+              <span className="rounded-full bg-secondary px-2.5 py-1 text-muted-foreground">{problem.topic}</span>
+              {solved && <span className="rounded-full bg-secondary px-2.5 py-1 text-success">✓ Solved</span>}
+            </div>
+            <p className="mt-5 whitespace-pre-line text-sm leading-relaxed text-foreground/90">{problem.statement}</p>
+            <h3 className="mt-6 text-sm font-semibold">Approach checklist</h3>
+            <ul className="mt-2 space-y-1.5 text-sm text-muted-foreground">
+              <li>• Restate the input and output in your own words.</li>
+              <li>• Test edge cases: empty input, one element, duplicates, negatives.</li>
+              <li>• State time and space complexity before you submit.</li>
+            </ul>
+            <p className="mt-6 rounded-xl border border-border bg-secondary/50 p-4 text-xs text-muted-foreground">
+              Write your solution on the right, then press <span className="text-foreground">Review my code</span> — the
+              AI checks correctness, complexity and edge cases like a judge would.
+            </p>
+          </>
+        ) : (
+          <ol className="space-y-3">
+            {hints.map((h, i) => (
+              <li key={h}>
+                <details className="rounded-xl border border-border p-4">
+                  <summary className="cursor-pointer text-sm font-medium">Hint {i + 1}</summary>
+                  <p className="mt-2 text-sm text-muted-foreground">{h}</p>
+                </details>
+              </li>
+            ))}
+          </ol>
+        )}
+      </div>
+    </div>
   );
 }
