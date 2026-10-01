@@ -199,3 +199,81 @@ function ProblemsPage() {
     </AppShell>
   );
 }
+
+const TOPIC_HINTS: Record<string, string[]> = {
+  Arrays: ["Can a hash map remember what you've already seen?", "Try two pointers or a prefix sum before nested loops."],
+  Strings: ["Count characters with a fixed-size array or map.", "A sliding window often replaces re-scanning substrings."],
+  "Linked List": ["Draw the pointers before you move them.", "Fast and slow pointers find middles and cycles."],
+  Trees: ["Decide what each recursive call should return to its parent.", "BFS with a queue handles level-by-level questions."],
+  Graphs: ["Build an adjacency list first.", "Track visited nodes to avoid infinite loops."],
+  "Dynamic Programming": ["Define dp[i] in one sentence before coding.", "Write the brute-force recursion, then memoise it."],
+};
+
+function ProblemDescription({ problem, solved }: { problem: Problem; solved: boolean }) {
+  const [tab, setTab] = useState<"description" | "hints">("description");
+  const hints = TOPIC_HINTS[problem.topic] ?? [
+    "Start with the brute force and state its complexity.",
+    "Ask what repeated work you can cache or skip.",
+  ];
+  return (
+    <div className="flex min-h-0 flex-col">
+      <div className="flex gap-1 border-b border-border px-4 py-2">
+        {(["description", "hints"] as const).map((t) => (
+          <button
+            key={t}
+            onClick={() => setTab(t)}
+            className={cn(
+              "rounded-md px-3 py-1 text-xs capitalize text-muted-foreground hover:text-foreground",
+              tab === t && "bg-secondary text-foreground",
+            )}
+          >
+            {t}
+          </button>
+        ))}
+      </div>
+      <div className="min-h-0 flex-1 overflow-y-auto p-5">
+        {tab === "description" ? (
+          <>
+            <h2 className="text-xl font-semibold tracking-tight">{problem.title}</h2>
+            <div className="mt-3 flex flex-wrap items-center gap-2 text-[11px]">
+              <span
+                className={cn(
+                  "rounded-full bg-secondary px-2.5 py-1",
+                  problem.difficulty === "Easy" && "text-success",
+                  problem.difficulty === "Medium" && "text-warning",
+                  problem.difficulty === "Hard" && "text-destructive",
+                )}
+              >
+                {problem.difficulty}
+              </span>
+              <span className="rounded-full bg-secondary px-2.5 py-1 text-muted-foreground">{problem.topic}</span>
+              {solved && <span className="rounded-full bg-secondary px-2.5 py-1 text-success">✓ Solved</span>}
+            </div>
+            <p className="mt-5 whitespace-pre-line text-sm leading-relaxed text-foreground/90">{problem.statement}</p>
+            <h3 className="mt-6 text-sm font-semibold">Approach checklist</h3>
+            <ul className="mt-2 space-y-1.5 text-sm text-muted-foreground">
+              <li>• Restate the input and output in your own words.</li>
+              <li>• Test edge cases: empty input, one element, duplicates, negatives.</li>
+              <li>• State time and space complexity before you submit.</li>
+            </ul>
+            <p className="mt-6 rounded-xl border border-border bg-secondary/50 p-4 text-xs text-muted-foreground">
+              Write your solution on the right, then press <span className="text-foreground">Review my code</span> — the
+              AI checks correctness, complexity and edge cases like a judge would.
+            </p>
+          </>
+        ) : (
+          <ol className="space-y-3">
+            {hints.map((h, i) => (
+              <li key={h}>
+                <details className="rounded-xl border border-border p-4">
+                  <summary className="cursor-pointer text-sm font-medium">Hint {i + 1}</summary>
+                  <p className="mt-2 text-sm text-muted-foreground">{h}</p>
+                </details>
+              </li>
+            ))}
+          </ol>
+        )}
+      </div>
+    </div>
+  );
+}
