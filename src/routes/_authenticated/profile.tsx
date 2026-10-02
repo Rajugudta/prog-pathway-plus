@@ -32,6 +32,7 @@ export const Route = createFileRoute("/_authenticated/profile")({
 
 function ProfilePage() {
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
   const { user } = useAuth();
   const fetchProfile = useServerFn(getFullProfile);
   const fetchProgress = useServerFn(getProgress);
