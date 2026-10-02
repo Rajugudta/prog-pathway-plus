@@ -1,9 +1,10 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
-import { Github, Globe, GraduationCap, Linkedin, MapPin, Plus, Target, X } from "lucide-react";
+import { Github, Globe, GraduationCap, Linkedin, LogOut, MapPin, Plus, Target, X } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 import { AppShell, PageSection } from "@/components/AppShell";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -31,6 +32,7 @@ export const Route = createFileRoute("/_authenticated/profile")({
 
 function ProfilePage() {
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
   const { user } = useAuth();
   const fetchProfile = useServerFn(getFullProfile);
   const fetchProgress = useServerFn(getProgress);
@@ -62,6 +64,13 @@ function ProfilePage() {
   }, [progress.data]);
 
   const unlocked = badges.data?.unlocked?.length ?? 0;
+
+  const signOut = async () => {
+    await queryClient.cancelQueries();
+    queryClient.clear();
+    await supabase.auth.signOut();
+    navigate({ to: "/auth", replace: true });
+  };
 
   return (
     <AppShell title="Profile" subtitle="The version of you a recruiter would read">
@@ -121,6 +130,20 @@ function ProfilePage() {
               />
               <Stat label="Badges" value={unlocked} hint="Unlocked so far" />
             </section>
+
+            <section className="mica flex flex-wrap items-center justify-between gap-4 rounded-2xl p-5">
+              <div className="min-w-0">
+                <p className="text-sm font-semibold">Account</p>
+                <p className="mt-0.5 truncate text-xs text-muted-foreground">
+                  {user?.email ?? "Signed in"} — signing out ends this session on this device.
+                </p>
+              </div>
+              <Button variant="outline" onClick={signOut} disabled={mutation.isPending}>
+                <LogOut className="size-4" />
+                Sign out
+              </Button>
+            </section>
+
 
             <SkillsCard
               skills={p.skills ?? []}
