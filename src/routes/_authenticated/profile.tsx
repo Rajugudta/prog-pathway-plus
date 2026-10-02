@@ -131,6 +131,20 @@ function ProfilePage() {
               <Stat label="Badges" value={unlocked} hint="Unlocked so far" />
             </section>
 
+            <section className="mica flex flex-wrap items-center justify-between gap-4 rounded-2xl p-5">
+              <div className="min-w-0">
+                <p className="text-sm font-semibold">Account</p>
+                <p className="mt-0.5 truncate text-xs text-muted-foreground">
+                  {user?.email ?? "Signed in"} — signing out ends this session on this device.
+                </p>
+              </div>
+              <Button variant="outline" onClick={signOut} disabled={mutation.isPending}>
+                <LogOut className="size-4" />
+                Sign out
+              </Button>
+            </section>
+
+
             <SkillsCard
               skills={p.skills ?? []}
               onChange={(skills) => mutation.mutate({ skills } as never)}
