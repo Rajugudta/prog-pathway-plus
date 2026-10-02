@@ -1,9 +1,10 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
-import { Github, Globe, GraduationCap, Linkedin, MapPin, Plus, Target, X } from "lucide-react";
+import { Github, Globe, GraduationCap, Linkedin, LogOut, MapPin, Plus, Target, X } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 import { AppShell, PageSection } from "@/components/AppShell";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
