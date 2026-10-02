@@ -65,6 +65,13 @@ function ProfilePage() {
 
   const unlocked = badges.data?.unlocked?.length ?? 0;
 
+  const signOut = async () => {
+    await queryClient.cancelQueries();
+    queryClient.clear();
+    await supabase.auth.signOut();
+    navigate({ to: "/auth", replace: true });
+  };
+
   return (
     <AppShell title="Profile" subtitle="The version of you a recruiter would read">
       <PageSection className="space-y-6">
