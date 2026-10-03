@@ -23,7 +23,7 @@ const lines = (s: string) => s.split("\n").map((l) => l.replace(/^[-•*]\s*/, "
 
 type Result = OptimizedResume & { companies: string[] };
 
-export function ResumeBuilder({ profile, email }: { profile: FullProfile; email?: string | null }) {
+export function ResumeBuilder({ profile, email }: { profile: FullProfile; email?: string | null | undefined }) {
   const [draft, setDraft] = useState<Draft>(EMPTY);
   const [opt, setOpt] = useState<Result | null>(null);
   const optimize = useServerFn(optimizeResume);
@@ -74,7 +74,7 @@ export function ResumeBuilder({ profile, email }: { profile: FullProfile; email?
     const bullets = (items: string[]) => {
       for (const b of items) {
         const isHead = / — /.test(b) && b.indexOf(" — ") < 60;
-        if (isHead) { const [h, ...rest] = b.split(" — "); y += 2; text(h, 10.5, "bold"); if (rest.join(" — ")) text("• " + rest.join(" — "), 10, "normal", 8); }
+        if (isHead) { const [h, ...rest] = b.split(" — "); y += 2; text(h ?? "", 10.5, "bold"); if (rest.length) text("• " + rest.join(" — "), 10, "normal", 8); }
         else text("• " + b, 10, "normal", 8);
       }
     };
