@@ -12,6 +12,8 @@ type ChatRequestBody = {
   interviewId?: string;
 };
 
+const rateMap = new Map<string, number[]>();
+
 function userClient(token: string) {
   return createClient(process.env["SUPABASE_URL"]!, process.env["SUPABASE_PUBLISHABLE_KEY"]!, {
     auth: { persistSession: false, autoRefreshToken: false },
@@ -23,19 +25,42 @@ export const Route = createFileRoute("/api/chat")({
   server: {
     handlers: {
       POST: async ({ request }) => {
-        const body = (await request.json()) as ChatRequestBody;
+        const token = request.headers.get("authorization")?.replace(/^Bearer\s+/i, "") ?? "";
+        if (!token || token.split(".").length !== 3) return new Response("Unauthorized", { status: 401 });
+
+        const raw = await request.text();
+        if (raw.length > 400_000) return new Response("Conversation too long", { status: 413 });
+        let body: ChatRequestBody;
+        try {
+          body = JSON.parse(raw) as ChatRequestBody;
+        } catch {
+          return new Response("Invalid request", { status: 400 });
+        }
+        if (Array.isArray(body.messages) && body.messages.length > 60) {
+          body.messages = body.messages.slice(-60); // keep recent context only
+        }
         const messages = body.messages;
         if (!Array.isArray(messages) || messages.length === 0) {
           return new Response("Messages are required", { status: 400 });
         }
 
-        const token = request.headers.get("authorization")?.replace(/^Bearer\s+/i, "") ?? "";
-        if (!token) return new Response("Unauthorized", { status: 401 });
-
         const supabase = userClient(token);
         const { data: userData, error: userError } = await supabase.auth.getUser();
         if (userError || !userData.user) return new Response("Unauthorized", { status: 401 });
         const userId = userData.user.id;
+
+        // Per-user rate limit (best effort, per server instance).
+        const now = Date.now();
+        const hits = (rateMap.get(userId) ?? []).filter((t) => now - t < 60_000);
+        if (hits.length >= 20) {
+          return new Response("You're sending messages too fast. Wait a moment and try again.", {
+            status: 429,
+            headers: { "Retry-After": "30" },
+          });
+        }
+        hits.push(now);
+        rateMap.set(userId, hits);
+        if (rateMap.size > 5000) rateMap.clear();
 
         let system = TUTOR_SYSTEM_PROMPT;
         if (body.mode === "interview") {
