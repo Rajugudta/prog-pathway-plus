@@ -44,12 +44,25 @@ function isH3SwallowedErrorBody(body: string): boolean {
   }
 }
 
+function withSecurityHeaders(response: Response): Response {
+  try {
+    const h = response.headers;
+    h.set("X-Content-Type-Options", "nosniff");
+    h.set("Referrer-Policy", "strict-origin-when-cross-origin");
+    h.set("Strict-Transport-Security", "max-age=31536000; includeSubDomains");
+    h.set("Permissions-Policy", "camera=(), geolocation=(), microphone=(self)");
+    return response;
+  } catch {
+    return response; // immutable headers (e.g. proxied responses)
+  }
+}
+
 export default {
   async fetch(request: Request, env: unknown, ctx: unknown) {
     try {
       const handler = await getServerEntry();
       const response = await handler.fetch(request, env, ctx);
-      return await normalizeCatastrophicSsrResponse(response);
+      return withSecurityHeaders(await normalizeCatastrophicSsrResponse(response));
     } catch (error) {
       console.error(error);
       return new Response(renderErrorPage(), {
