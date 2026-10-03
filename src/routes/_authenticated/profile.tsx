@@ -14,6 +14,7 @@ import { getFullProfile, updateProfile, type FullProfile } from "@/lib/placement
 import { getProgress } from "@/lib/app.functions";
 import { getAchievements } from "@/lib/achievements.functions";
 import { PROBLEMS } from "@/data/problems";
+import { ResumeBuilder } from "@/components/ResumeBuilder";
 
 export const Route = createFileRoute("/_authenticated/profile")({
   head: () => ({
@@ -152,6 +153,8 @@ function ProfilePage() {
             />
 
             <DetailsForm profile={p} onSave={(patch) => mutation.mutate(patch as never)} saving={mutation.isPending} />
+
+            <ResumeBuilder profile={p} email={user?.email} />
           </>
         )}
       </PageSection>
